@@ -3,9 +3,10 @@ async function loadProducts() {
   grid.innerHTML = '<p>กำลังโหลดสินค้า...</p>';
 
   try {
-    const res = await fetch('http://localhost:4000/api/products');
-    const products = await res.json();
+    const res = await fetch('/api/products');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
+    const products = await res.json();
     if (!Array.isArray(products) || products.length === 0) {
       grid.innerHTML = '<p>ยังไม่มีสินค้า</p>';
       return;
@@ -16,8 +17,8 @@ async function loadProducts() {
         <img class="thumb" alt="${p.name}" src="${p.image_url_main || 'img/no-image.png'}" />
         <div class="card-body">
           <h3>${p.name}</h3>
-          <div class="sku">SKU: ${p.description}</div>
-          <div class="price">฿${p.price.toLocaleString()}</div>
+          <div class="sku">SKU: ${p.description ?? ''}</div>
+          <div class="price">฿${Number(p.price).toLocaleString()}</div>
           <a class="btn" href="product.html?id=${p.id}">ดูรายละเอียด</a>
         </div>
       </article>
