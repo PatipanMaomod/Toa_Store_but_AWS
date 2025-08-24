@@ -1,81 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
     <meta charset="UTF-8">
-    <title>Admin Management - Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/Pages/management.css">
-    <style>
-    </style>
+    <title>Admin Management - จัดการสินค้า</title>
+    <meta name="description" content="ระบบจัดการสินค้าสำหรับผู้ดูแลระบบ - เพิ่ม แก้ไข ลบสินค้าได้อย่างง่ายดาย">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/Pages/management.css">
 </head>
 
-<body>
-    <header>
-        <div class="logo">Admin Panel</div>
-        <nav class="nav">
-            <ul>
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Products</a></li>
-                <li><a href="#">Orders</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <h1>จัดการสินค้า</h1>
-        <div style="text-align:right; margin: 20px 50px;">
-            <button id="addProductBtn"
-                style="padding:12px 30px; border-radius:25px; background:linear-gradient(45deg,#ffd369,#ff6b6b); color:#000; font-weight:600; border:none; cursor:pointer;">+
-                เพิ่มสินค้า</button>
-        </div>
-        <div class="products-container" id="productsContainer">
-            <!-- Product cards will be injected here -->
-        </div>
-    </main>
-
-    <!-- Modal for Add/Edit Product -->
-    <div id="productModal"
-        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center;">
-        <form id="productForm"
-            style="background:#181920; padding:30px 40px; border-radius:20px; min-width:320px; max-width:90vw; box-shadow:0 10px 40px rgba(0,0,0,0.4); display:flex; flex-direction:column; gap:18px;">
-            <h2 id="modalTitle" style="margin-bottom:10px; color:#ffd369;">เพิ่ม/แก้ไข สินค้า</h2>
-            <input type="hidden" id="productId">
-            <label>
-                ชื่อสินค้า
-                <input type="text" id="productName" required
-                    style="width:100%; padding:10px; border-radius:8px; border:1px solid #ffd369; margin-top:5px;">
-            </label>
-            <label>
-                ราคา
-                <input type="number" id="productPrice" required min="0"
-                    style="width:100%; padding:10px; border-radius:8px; border:1px solid #ffd369; margin-top:5px;">
-            </label>
-            <label>
-                รายละเอียด
-                <textarea id="productDescription" rows="3"
-                    style="width:100%; padding:10px; border-radius:8px; border:1px solid #ffd369; margin-top:5px;"></textarea>
-            </label>
-            <label>
-                รูปภาพ (URL)
-                <input type="url" id="productImage" required
-                    style="width:100%; padding:10px; border-radius:8px; border:1px solid #ffd369; margin-top:5px;">
-            </label>
-            <div style="display:flex; gap:10px; justify-content:flex-end;">
-                <button type="button" id="cancelBtn"
-                    style="padding:10px 20px; border-radius:20px; background:#aaa; color:#222; border:none;">ยกเลิก</button>
-                <button type="submit"
-                    style="padding:10px 30px; border-radius:20px; background:linear-gradient(45deg,#ffd369,#ff6b6b); color:#000; font-weight:600; border:none;">บันทึก</button>
+<body> <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo"> Admin Panel </div>
+                <nav class="nav"> <button class="nav-btn active" data-tab="products"> จัดการสินค้า </button> </nav>
             </div>
-        </form>
-    </div>
-
-    <footer>
-        &copy; 2024 Admin Management
+        </div>
+    </header> <!-- Main Content -->
+    <main class="main">
+        <div class="container"> <!-- Products Section -->
+            <section id="products" class="tab-content active">
+                <div class="section-header">
+                    <h1 class="section-title">จัดการสินค้า</h1> <button id="addProductBtn" class="btn-primary"> <span
+                            class="btn-icon">+</span> เพิ่มสินค้า </button>
+                </div>
+                <div id="productsGrid" class="products-grid"> <!-- Products will be populated by JavaScript --> </div>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="empty-text">ยังไม่มีสินค้าในระบบ</div> <button class="btn-primary"
+                        onclick="openProductModal()"> เพิ่มสินค้าแรก </button>
+                </div>
+            </section>
+        </div>
+    </main> <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-overlay" onclick="closeProductModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">เพิ่มสินค้าใหม่</h2> <button class="modal-close"
+                    onclick="closeProductModal()">&times;</button>
+            </div>
+            <form id="productForm" class="product-form"> <input type="hidden" id="productId">
+                <div class="form-group"> <label for="productName">ชื่อสินค้า</label> <input type="text" id="productName"
+                        required> </div>
+                <div class="form-group"> <label for="productPrice">ราคา (บาท)</label> <input type="number"
+                        id="productPrice" min="0" step="0.01" required> </div>
+                <div class="form-group"> <label for="productDescription">รายละเอียด</label> <textarea
+                        id="productDescription" rows="3"></textarea> </div>
+                <div class="form-group"> <label for="productImage">รูปภาพ (URL)</label> <input type="url"
+                        id="productImage" required> </div>
+                <div class="form-actions"> <button type="button" class="btn-secondary" onclick="closeProductModal()">
+                        ยกเลิก </button> <button type="submit" class="btn-primary"> บันทึก </button> </div>
+            </form>
+        </div>
+    </div> <!-- Toast -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <div id="toastTitle" class="toast-title"></div>
+            <div id="toastMessage" class="toast-message"></div>
+        </div>
+    </div> <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content"> &copy; 2024 Admin Management </div>
+        </div>
     </footer>
+    <script src="static/js/Pages/management.js"></script>
 </body>
 
 </html>
-</div>
-</form>
-</div>
