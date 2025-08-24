@@ -1,4 +1,51 @@
 let cart = [];
+let currentProduct = null;
+
+// Product data with detailed information
+const productDetails = {
+  'Gaming Keyboard': {
+    price: '$149.99',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6xRFNeGoO4njAGt0hambMZ28NbNBP4eICHQ&s',
+    description: 'Experience the ultimate in gaming performance with our premium mechanical gaming keyboard. Featuring Cherry MX switches, customizable RGB lighting, and premium build quality that will elevate your gaming experience to the next level.',
+    features: [
+      'Cherry MX Blue mechanical switches',
+      'Per-key RGB lighting with 16.7M colors',
+      'Anti-ghosting technology',
+      'Dedicated media controls',
+      'Detachable USB-C cable',
+      'Aluminum frame construction',
+      'Gaming mode with Windows key lock'
+    ]
+  },
+  'Gaming Mouse': {
+    price: '$79.99',
+    image: 'https://th.thermaltake.com/media/catalog/product/cache/6af153fd0a0c509bdfcdfb60a394dd9c/t/o/toughdesk500lrgb_01_1.jpg',
+    description: 'Precision meets style in this high-performance gaming mouse. With advanced sensor technology and ergonomic design, it\'s built for marathon gaming sessions and competitive play.',
+    features: [
+      'PixArt 3360 optical sensor',
+      'Up to 12,000 DPI',
+      'RGB lighting with sync capability',
+      'Ergonomic right-handed design',
+      '6 programmable buttons',
+      'Braided cable with gold-plated USB',
+      'On-the-fly DPI switching'
+    ]
+  },
+  'Gaming Headset': {
+    price: '$199.99',
+    image: 'https://th.thermaltake.com/media/catalog/product/cache/cc8b24283b13da6bc2ff91682c03b54b/0/1/01_6_1.jpg',
+    description: 'Immerse yourself in crystal-clear audio with our premium gaming headset. Featuring 7.1 surround sound, noise-cancelling microphone, and comfort-focused design for extended gaming sessions.',
+    features: [
+      '7.1 virtual surround sound',
+      '50mm neodymium drivers',
+      'Noise-cancelling microphone',
+      'Memory foam ear cushions',
+      'RGB lighting on ear cups',
+      'Multi-platform compatibility',
+      'Detachable microphone'
+    ]
+  }
+};
 
 // Generate background particles
 function createParticles() {
@@ -70,6 +117,56 @@ function checkout() {
   }
 }
 
+// Product popup functions
+function openProductPopup(productName) {
+  const product = productDetails[productName];
+  if (!product) return;
+  
+  currentProduct = productName;
+  
+  // Update popup content
+  document.getElementById('popup-img').src = product.image;
+  document.getElementById('popup-img').alt = productName;
+  document.getElementById('popup-title').textContent = productName;
+  document.getElementById('popup-price').textContent = product.price;
+  document.getElementById('popup-description').textContent = product.description;
+  
+  // Update features list
+  const featuresContainer = document.getElementById('popup-features');
+  featuresContainer.innerHTML = `
+    <h4>Key Features:</h4>
+    <ul>
+      ${product.features.map(feature => `<li>${feature}</li>`).join('')}
+    </ul>
+  `;
+  
+  // Show popup
+  document.getElementById('popup-overlay').classList.add('active');
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closeProductPopup() {
+  document.getElementById('popup-overlay').classList.remove('active');
+  document.body.style.overflow = 'auto'; // Restore scrolling
+  currentProduct = null;
+}
+
+function addToCartFromPopup() {
+  if (currentProduct) {
+    addToCart(currentProduct);
+    closeProductPopup();
+  }
+}
+
+function buyNowFromPopup() {
+  if (currentProduct) {
+    // Clear cart and add only this product
+    cart = [currentProduct];
+    const cartData = encodeURIComponent(JSON.stringify(cart));
+    window.location.href = `checkout.html?cart=${cartData}`;
+  }
+}
+
 // Initialize particles when page loads
 document.addEventListener('DOMContentLoaded', function() {
   createParticles();
@@ -83,5 +180,12 @@ document.addEventListener('click', function(event) {
   
   if (!cartPanel.contains(event.target) && !cartButton.contains(event.target)) {
     cartPanel.classList.remove('active');
+  }
+});
+
+// Close popup with Escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeProductPopup();
   }
 });
