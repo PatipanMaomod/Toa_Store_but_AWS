@@ -21,6 +21,7 @@
         <div class="auth-buttons">
             <button class="btn" onclick="openModal('signinModal')">SIGN IN</button>
             <button class="btn" onclick="openModal('registerModal')">JOIN US</button>
+            <button class="btn" onclick="openModal('Sign In Admin')">Admin</button>
         </div>
     </header>
 
@@ -35,7 +36,7 @@
     <div id="signinModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('signinModal')">&times;</span>
-            <h2>Sign In</h2>
+            <h3>Sign In</h3>
             <input type="email" placeholder="Email Address *">
             <input type="password" placeholder="Password *">
             <label><input type="checkbox"> Keep me logged in</label>
@@ -64,9 +65,57 @@
         </div>
     </div>
 
+    <div id="Sign In Admin" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('Sign In Admin')">&times;</span>
+            <h3>Sign In Admin</h3>
+            <input type="email" placeholder="Email Address *">
+            <input type="password" placeholder="Password *">
+            <label><input type="checkbox"> Keep me logged in</label>
+            <button>SUBMIT</button>
+        </div>
+    </div>
+
+    <div class="products-container">
+        <div class="card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6xRFNeGoO4njAGt0hambMZ28NbNBP4eICHQ&s" alt="Gaming Keyboard">
+            <h3>Gaming Keyboard</h3>
+            <p>High performance mechanical keyboard with RGB lighting and premium switches for the ultimate gaming experience.</p>
+            <button onclick="addToCart('Gaming Keyboard')">Add to Cart</button>
+        </div>
+        <div class="card">
+            <img src="https://th.thermaltake.com/media/catalog/product/cache/6af153fd0a0c509bdfcdfb60a394dd9c/t/o/toughdesk500lrgb_01_1.jpg" alt="Gaming Mouse">
+            <h3>Gaming Mouse</h3>
+            <p>Precision tracking and customizable RGB lighting with ergonomic design for extended gaming sessions.</p>
+            <button onclick="addToCart('Gaming Mouse')">Add to Cart</button>
+        </div>
+        <div class="card">
+            <img src="https://th.thermaltake.com/media/catalog/product/cache/cc8b24283b13da6bc2ff91682c03b54b/0/1/01_6_1.jpg" alt="Gaming Headset">
+            <h3>Gaming Headset</h3>
+            <p>Immersive surround sound experience with crystal clear microphone and comfortable padding.</p>
+            <button onclick="addToCart('Gaming Headset')">Add to Cart</button>
+        </div>
+    </div>
+    <section class="section2">
+
+    </section>
     <footer>
-        <p>&copy; 2025 Teburu </p>
+    <div class="footer-left">
+        <p>&copy; 2025 Teburu</p>
+    </div>
+    <div class="footer-right">
+        <h2>Contact Us</h2>
+        <p>Email: support@teburu.com</p>
+        <p>Phone: +66 2 123 4567</p>
+        <p>Address: 123 Teburu Street, Bangkok, Thailand</p>
+        <div class="socials">
+        <a href="#">Facebook</a> |
+        <a href="#">Instagram</a> |
+        <a href="#">Twitter</a>
+        </div>
+    </div>
     </footer>
+
 
     <script>
         function openModal(id) {
