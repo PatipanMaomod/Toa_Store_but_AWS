@@ -31,20 +31,20 @@
 
   <div class="products-container">
     <div class="card">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6xRFNeGoO4njAGt0hambMZ28NbNBP4eICHQ&s" alt="Gaming Keyboard">
-      <h3>Gaming Keyboard</h3>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6xRFNeGoO4njAGt0hambMZ28NbNBP4eICHQ&s" alt="Gaming Keyboard" onclick="openProductPopup('Gaming Keyboard')">
+      <h3 onclick="openProductPopup('Gaming Keyboard')">Gaming Keyboard</h3>
       <p>High performance mechanical keyboard with RGB lighting and premium switches for the ultimate gaming experience.</p>
       <button onclick="addToCart('Gaming Keyboard')">Add to Cart</button>
     </div>
     <div class="card">
-      <img src="https://th.thermaltake.com/media/catalog/product/cache/6af153fd0a0c509bdfcdfb60a394dd9c/t/o/toughdesk500lrgb_01_1.jpg" alt="Gaming Mouse">
-      <h3>Gaming Mouse</h3>
+      <img src="https://th.thermaltake.com/media/catalog/product/cache/6af153fd0a0c509bdfcdfb60a394dd9c/t/o/toughdesk500lrgb_01_1.jpg" alt="Gaming Mouse" onclick="openProductPopup('Gaming Mouse')">
+      <h3 onclick="openProductPopup('Gaming Mouse')">Gaming Mouse</h3>
       <p>Precision tracking and customizable RGB lighting with ergonomic design for extended gaming sessions.</p>
       <button onclick="addToCart('Gaming Mouse')">Add to Cart</button>
     </div>
     <div class="card">
-      <img src="https://th.thermaltake.com/media/catalog/product/cache/cc8b24283b13da6bc2ff91682c03b54b/0/1/01_6_1.jpg" alt="Gaming Headset">
-      <h3>Gaming Headset</h3>
+      <img src="https://th.thermaltake.com/media/catalog/product/cache/cc8b24283b13da6bc2ff91682c03b54b/0/1/01_6_1.jpg" alt="Gaming Headset" onclick="openProductPopup('Gaming Headset')">
+      <h3 onclick="openProductPopup('Gaming Headset')">Gaming Headset</h3>
       <p>Immersive surround sound experience with crystal clear microphone and comfortable padding.</p>
       <button onclick="addToCart('Gaming Headset')">Add to Cart</button>
     </div>
@@ -59,6 +59,33 @@
     <h2>🛒 Your Cart</h2>
     <div id="cart-items"></div>
     <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+  </div>
+
+  <!-- Product Popup Modal -->
+  <div class="popup-overlay" id="popup-overlay" onclick="closeProductPopup()">
+    <div class="popup-modal" onclick="event.stopPropagation()">
+      <div class="popup-close" onclick="closeProductPopup()">×</div>
+      <div class="popup-content">
+        <div class="popup-left">
+          <div class="popup-thumbnails" id="popup-thumbnails">
+            <!-- Thumbnail images will be generated here -->
+          </div>
+          <div class="popup-image">
+            <img id="popup-main-img" src="" alt="">
+          </div>
+        </div>
+        <div class="popup-details">
+          <h2 id="popup-title"></h2>
+          <div class="popup-price" id="popup-price"></div>
+          <div class="popup-description" id="popup-description"></div>
+          <div class="popup-features" id="popup-features"></div>
+          <div class="popup-actions">
+            <button class="popup-add-cart" onclick="addToCartFromPopup()">Add to Cart</button>
+            <button class="popup-buy-now" onclick="buyNowFromPopup()">Buy Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <footer>
