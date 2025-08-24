@@ -9,10 +9,12 @@ const app = express();
 
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'index.html'));
+// });
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'product.html'));
 });
-
 
 
 
@@ -32,18 +34,6 @@ app.get('/api/products', async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 // middleware error handler
 app.use((err, _req, res, _next) => {
   console.error(err);
@@ -58,5 +48,5 @@ app.use((req, res) => {
 /* ---------- START ---------- */
 const port = Number(process.env.PORT || 4000);
 app.listen(4000, "0.0.0.0", () => {
-  console.log("Server running on http://0.0.0.0:4000");
+  console.log("Server running");
 });
