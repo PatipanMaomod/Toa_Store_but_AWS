@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <title>อัปโหลดภาพไปที่ S3</title>
+    <link rel="stylesheet" href="/static/css/Pages/upload.css">
+</head>
+
+<body>
+    <div class="bg-particles"></div>
+
+    <div class="upload-container">
+        <h1 class="upload-title">อัปโหลดภาพไปที่ S3</h1>
+
+        <form class="upload-form" id="uploadForm">
+            <input type="file" name="file" class="upload-input" id="fileInput" accept="image/*" required>
+            <button type="submit" class="upload-btn">อัปโหลด</button>
+        </form>
+
+        <div class="upload-status" id="status"></div>
+    </div>
+
+    <script src="/static/js/Pages/upload.js"></script>
+</body>
+
+</html>

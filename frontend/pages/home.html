@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teburu</title>
+    <link rel="stylesheet" href="\static\css\Pages\home.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">Teburu </div>
+        <nav class="nav">
+            <ul>
+                <li><a href="product.html" class="link">Products</a></li>
+                <li><a href="Community.html" class="link">Community</a></li>
+                <li><a href="Support.html" class="link">Support</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <button class="btn" onclick="openModal('signinModal')">SIGN IN</button>
+            <button class="btn" onclick="openModal('registerModal')">JOIN US</button>
+            <button class="btn" onclick="openModal('Sign In Admin')">Admin</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div>
+            <h1>Best Your Ultimate Table</h1>
+            <a href="product.html" class="btn">Shop Now</a>
+        </div>
+    </section>
+
+    <!-- SIGN IN Modal -->
+    <div id="signinModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('signinModal')">&times;</span>
+            <h3>Sign In</h3>
+            <input type="email" placeholder="Email Address *">
+            <input type="password" placeholder="Password *">
+            <label><input type="checkbox"> Keep me logged in</label>
+            <button>SUBMIT</button>
+        </div>
+    </div>
+
+    <!-- REGISTER Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h3>Join Us</h3>
+            <input type="text" placeholder="First Name *">
+            <input type="text" placeholder="Last Name *">
+            <input type="email" placeholder="Email Address *">
+            <input type="password" placeholder="Password *">
+            <input type="password" placeholder="Confirm Password *">
+            <label><input type="checkbox" checked> I agree to the Terms and Conditions</label>
+            <button>SUBMIT</button>
+        </div>
+    </div>
+
+    <div id="Sign In Admin" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('Sign In Admin')">&times;</span>
+            <h3>Sign In Admin</h3>
+            <input type="email" placeholder="Email Address *">
+            <input type="password" placeholder="Password *">
+            <label><input type="checkbox"> Keep me logged in</label>
+            <button>SUBMIT</button>
+        </div>
+    </div>
+
+    <div class="products-container" id="productsGrid">
+    </div>
+
+
+    </section>
+    <footer>
+    <div class="footer-left">
+        <p>&copy; 2025 Teburu</p>
+    </div>
+    <div class="footer-right">
+        <h2>Contact Us</h2>
+        <p>Email: support@teburu.com</p>
+        <p>Phone: +66 2 123 4567</p>
+        <p>Address: 123 Teburu Street, Bangkok, Thailand</p>
+        <div class="socials">
+        <a href="#">Facebook</a> |
+        <a href="#">Instagram</a> |
+        <a href="#">Twitter</a>
+        </div>
+    </div>
+    </footer>
+
+
+    <script src="\static\js\Pages\home.js"></script>
+    <script src="\static\js\API\loadpro_home.js"></script>
+</body>
+</html>
