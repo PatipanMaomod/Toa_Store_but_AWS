@@ -1,77 +1,120 @@
-// Year
-document.getElementById('y').textContent = new Date().getFullYear();
+// frontend/static/js/script.js
 
-// Simple slider
-const slides = [...document.querySelectorAll('.slide')];
-const dots = [...document.querySelectorAll('.dot')];
-let i = 0, timer;
-function show(n) {
-    slides.forEach((s, idx) => s.classList.toggle('active', idx === n));
-    dots.forEach((d, idx) => d.classList.toggle('active', idx === n));
-    i = n;
-}
-function next() { show((i + 1) % slides.length); }
-function play() { clearInterval(timer); timer = setInterval(next, 5000); }
-dots.forEach(d => d.addEventListener('click', e => { show(+d.dataset.slide); play(); }));
-play();
-
-// Keyboard nav for accessibility
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') { next(); play(); }
-    if (e.key === 'ArrowLeft') { show((i - 1 + slides.length) % slides.length); play(); }
+document.addEventListener('DOMContentLoaded', () => {
+    // โหลดตะกร้าจาก localStorage เมื่อหน้าเว็บโหลดเสร็จ
+    loadCartFromStorage();
+    updateCartCount();
+    renderCartPanel();
 });
 
+// ฟังก์ชันสำหรับโหลดตะกร้าจาก localStorage
+function loadCartFromStorage() {
+    // ถ้ามี 'cart' ใน localStorage ให้ดึงมาใช้, ถ้าไม่มีให้ใช้ array ว่าง
+    return JSON.parse(localStorage.getItem('cart')) || [];
+}
 
-let cart = [];
+// ฟังก์ชันสำหรับบันทึกตะกร้าลง localStorage
+function saveCartToStorage(cart) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
 
-function addToCart(product) {
-    // หา index ของสินค้าที่มีอยู่แล้ว
-    let index = cart.findIndex(item => item.name === product);
-    if (index !== -1) {
-        cart[index].quantity++;
+// ฟังก์ชันเพิ่มสินค้าลงตะกร้า
+function addToCart(productName) {
+    let cart = loadCartFromStorage();
+    
+    // เช็คว่ามีสินค้านี้ในตะกร้าหรือยัง
+    let existingProduct = cart.find(item => item.name === productName);
+
+    if (existingProduct) {
+        // ถ้ามีแล้ว ให้เพิ่มจำนวน
+        existingProduct.quantity++;
     } else {
-        cart.push({ name: product, quantity: 1 });
+        // ถ้ายังไม่มี ให้เพิ่มสินค้าใหม่เข้าไป
+        cart.push({ name: productName, quantity: 1 });
     }
+
+    // บันทึกตะกร้าล่าสุดลง localStorage
+    saveCartToStorage(cart);
+
+    // อัปเดตการแสดงผล
     updateCartCount();
-    renderCart();
+    renderCartPanel();
+    
+    // แสดงตะกร้าสินค้าหลังจากเพิ่มของ
+    toggleCart(true); 
 }
 
-function renderCart() {
-    let cartItems = document.getElementById('cart-items');
-    cartItems.innerHTML = '';
-    cart.forEach((item, index) => {
-        cartItems.innerHTML += `
-          <div class="cart-item">
-            <span>${item.name} (x${item.quantity})</span>
-            <button onclick="removeFromCart(${index})" style="background:red; color:#fff; border:none; padding:2px 6px; border-radius:4px; cursor:pointer;">X</button>
-          </div>
-        `;
-    });
+// ฟังก์ชันอัปเดตตัวเลขบนไอคอนตะกร้า
+function updateCartCount() {
+    const cart = loadCartFromStorage();
+    // นับจำนวนสินค้าทั้งหมดในตะกร้า
+    const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const cartCountElement = document.getElementById('cart-count');
+    if (cartCountElement) {
+        cartCountElement.textContent = totalQty;
+    }
 }
 
+// ฟังก์ชันแสดงรายการสินค้าในตะกร้า (Panel ด้านข้าง)
+function renderCartPanel() {
+    const cart = loadCartFromStorage();
+    const cartItemsElement = document.getElementById('cart-items');
+    
+    if (cartItemsElement) {
+        cartItemsElement.innerHTML = ''; // เคลียร์ของเก่าทิ้ง
+        if (cart.length === 0) {
+            cartItemsElement.innerHTML = '<p style="text-align:center;">Your cart is empty.</p>';
+            return;
+        }
+
+        cart.forEach((item, index) => {
+            cartItemsElement.innerHTML += `
+              <div class="cart-item">
+                <span>${item.name} (x${item.quantity})</span>
+                <button onclick="removeFromCart(${index})" style="background:red; color:#fff; border:none; padding:2px 6px; border-radius:4px; cursor:pointer;">X</button>
+              </div>
+            `;
+        });
+    }
+}
+
+// ฟังก์ชันลบสินค้าออกจากตะกร้า
 function removeFromCart(index) {
+    let cart = loadCartFromStorage();
+    
+    // ลดจำนวนสินค้าลง 1
     cart[index].quantity--;
+    
+    // ถ้าจำนวนเหลือน้อยกว่าหรือเท่ากับ 0 ให้ลบสินค้านั้นออกจากตะกร้า
     if (cart[index].quantity <= 0) {
         cart.splice(index, 1);
     }
+
+    saveCartToStorage(cart);
     updateCartCount();
-    renderCart();
+    renderCartPanel();
 }
 
-function updateCartCount() {
-    let totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
-    document.getElementById('cart-count').textContent = totalQty;
+
+// ฟังก์ชันเปิด/ปิดตะกร้าด้านข้าง
+function toggleCart(forceOpen = false) {
+    const cartPanel = document.getElementById('cart-panel');
+    if (cartPanel) {
+        if (forceOpen) {
+            cartPanel.classList.add('active');
+        } else {
+            cartPanel.classList.toggle('active');
+        }
+    }
 }
 
-function toggleCart() {
-    document.getElementById('cart-panel').classList.toggle('active');
-}
-
+// ฟังก์ชันไปยังหน้า Checkout
 function checkout() {
+    const cart = loadCartFromStorage();
     if (cart.length === 0) {
         alert("Your cart is empty!");
     } else {
-        alert("Proceeding to checkout with: " + cart.map(i => `${i.name} x${i.quantity}`).join(", "));
+        // ไม่ต้องทำอะไรพิเศษ เพราะข้อมูลอยู่ใน localStorage แล้ว
         window.location.href = "checkout.html";
     }
 }
