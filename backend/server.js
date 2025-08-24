@@ -44,16 +44,39 @@ app.get('/management', (req, res) => {
 app.get('/api/products', async (req, res) => {
   try {
     const [rows] = await pool.query(`
-      SELECT p.id, p.name, p.price, p.description, pi.image_url_main
+      SELECT p.id, p.name, p.price, p.description, pi.image_url_main, pi.image_url_sub
       FROM products AS p
-      JOIN product_image AS pi ON p.id = pi.product_id
+      LEFT JOIN product_image AS pi ON p.id = pi.product_id
     `);
-    res.json(rows);
+
+    // แปลงผลลัพธ์เป็น products พร้อม array images
+    const products = [];
+    const map = {};
+
+    rows.forEach(row => {
+      if (!map[row.id]) {
+        map[row.id] = {
+          id: row.id,
+          name: row.name,
+          description: row.description,
+          price: row.price,
+          images: []
+        };
+        products.push(map[row.id]);
+      }
+
+      // push รูปลง array
+      if (row.image_url_main) map[row.id].images.push(row.image_url_main);
+      if (row.image_url_sub) map[row.id].images.push(row.image_url_sub);
+    });
+
+    res.json(products);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database query failed' });
   }
 });
+
 
 
 
