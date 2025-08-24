@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - Teburu</title>
+  <link rel="stylesheet" href="/static/css/Pages/logAndRe.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>เข้าสู่ระบบผู้ดูแลระบบ</h2>
+    <form id="adminLoginForm">
+      <div class="form-group">
+        <label for="adminEmail">อีเมล</label>
+        <input type="email" id="adminEmail" required placeholder="Email Address *">
+      </div>
+      <div class="form-group">
+        <label for="adminPassword">รหัสผ่าน</label>
+        <input type="password" id="adminPassword" required placeholder="Password *">
+      </div>
+      <button type="submit" class="btn">เข้าสู่ระบบ</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("adminLoginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("adminEmail").value;
+      const password = document.getElementById("adminPassword").value;
+
+      // 🔥 TODO: เรียก API /api/admin/login
+      if (email && password) {
+        localStorage.setItem("user", JSON.stringify({ email, role: "admin" }));
+        alert("เข้าสู่ระบบผู้ดูแลสำเร็จ");
+        window.location.href = "/admin/management"; // redirect ไปหน้า admin
+      } else {
+        alert("กรุณากรอกข้อมูลให้ครบ");
+      }
+    });
+  </script>
+</body>
+</html>
