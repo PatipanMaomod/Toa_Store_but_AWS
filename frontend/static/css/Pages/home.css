@@ -46,7 +46,6 @@ header {
 
 .nav .link {
     display: block;
-    /* แก้ให้ hover ครอบเต็ม */
     padding: 10px 12px;
     border-radius: 10px;
     color: #e6eaf5;
@@ -132,7 +131,7 @@ footer {
     background: #111;
     padding: 2rem;
     text-align: center;
-    color: #aaa;
+    color: #000000;
 }
 
 /* ปุ่ม SIGN IN & JOIN US */
@@ -354,15 +353,15 @@ footer {
 }
 .products-container {
     display: flex;
-    flex-wrap: wrap;       /* ถ้าเกินบรรทัดจะตัดลงด้านล่าง */
-    gap: 20px;             /* ระยะห่างระหว่างการ์ด */
-    justify-content: center; /* จัดให้อยู่กลาง */
+    flex-wrap: wrap;       
+    gap: 20px;             
+    justify-content: center; 
     padding: 2rem;
 }
 
 .products-container .card {
-    flex: 1 1 300px;       /* กำหนดขนาดขั้นต่ำการ์ด */
-    max-width: 320px;      /* จำกัดความกว้างการ์ด */
+    flex: 1 1 300px;       
+    max-width: 320px;      
 }
 
 .products-container .h1 {
@@ -383,7 +382,7 @@ footer {
 .section2 h2 {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: var(--primary);      /* ใช้สีหลัก */
+    color: var(--primary);      
 }
 
 .section2 p {
@@ -404,23 +403,136 @@ footer {
 }
 
 .section2 .socials a:hover {
-    color: #fff;
+    color: #bdbdbd;
 }
 
+/* คอนแท็กล่างสุด */
 footer {
-  display: flex;
-  justify-content: space-between; /* ด้านซ้าย-ขวา */
-  align-items: flex-start;
-  padding: 20px;
-  background-color: #f2f2f2; /* สีพื้นหลัง */
+    background-color: #353535; /* เทาอ่อน ไม่แสบตา */
+    color: #333;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
 }
 
-footer .footer-left {
-  flex: 1;
-  text-align: left;
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 30px;
 }
 
-footer .footer-right {
-  flex: 2;
-  text-align: right; /* ให้ข้อมูลทางขวาชิดขวา */
+.footer-left {
+    flex: 1;
+    min-width: 250px;
 }
+
+.footer-logo {
+    width: 150px; /* ปรับขนาดโลโก้ */
+    margin-bottom: 15px;
+}
+
+.footer-left p {
+    font-size: 0.95rem;
+    color: #979797;
+}
+
+.footer-right {
+    flex: 2;
+    min-width: 300px;
+}
+
+.footer-right h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #979797;
+}
+
+.footer-right p {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #979797;
+}
+
+.socials {
+    margin-top: 15px;
+}
+
+.socials a {
+    margin-right: 15px;
+    text-decoration: none;
+    color: #979797;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.socials a:hover {
+    color: #ff9900; /* สีไฮไลท์เวลา hover */
+}
+/* คอนแท็กล่างสุด */
+/* เหตุผลการขาย */
+.sectiondes {
+    background: linear-gradient(rgba(18, 19, 24, 0.9), rgba(18, 19, 24, 0.8)), 
+                url('https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100,f_auto/products/Gaming-Desks/CF-9500052/CF-9500052_11.webp') center/cover no-repeat;
+    color: #fff;
+    min-height: 100vh; 
+    padding: 100px 40px; 
+    display: flex;
+    align-items: center; 
+    text-align: center;
+}
+.sectiondes h1 {
+    font-size: 4rem; 
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: #ffcc66;
+}
+.sectiondes .subtitle {
+    font-size: 1.8rem;
+    margin-bottom: 60px;
+    opacity: 0.9;
+}
+.reasons {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.reason {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 40px 30px;
+    border-radius: 20px;
+    width: 300px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.reason:nth-child(1) {
+    margin-top: 0px;
+}
+.reason:nth-child(2) {
+    margin-top: 50px;
+}
+.reason:nth-child(3) {
+    margin-top: 100px;
+}
+.reason:nth-child(4) {
+    margin-top: 150px;
+}
+.reason:hover {
+    transform: translateY(-15px) scale(1.03);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+.reason h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: #ffcc66;
+}
+.reason p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+/* เหตุผลการขาย */
