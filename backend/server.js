@@ -33,8 +33,17 @@ app.get('/upload', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'upload.html'));
 });
 
+app.get('/admin/login', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages','management', 'admin_login.html'));
+});
 
-app.get('/management', (req, res) => {
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'login.html'));
+});
+
+
+
+app.get('/admin/management', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages','management', 'management.html'));
 });
 
@@ -44,12 +53,11 @@ app.get('/management', (req, res) => {
 app.get('/api/products', async (req, res) => {
   try {
     const [rows] = await pool.query(`
-      SELECT p.id, p.name, p.price, p.description, pi.image_url_main, pi.image_url_sub
+      SELECT p.id, p.name, p.price,p.stock ,p.description, pi.image_url_main, pi.image_url_sub
       FROM products AS p
       LEFT JOIN product_image AS pi ON p.id = pi.product_id
     `);
 
-    // แปลงผลลัพธ์เป็น products พร้อม array images
     const products = [];
     const map = {};
 
@@ -60,14 +68,15 @@ app.get('/api/products', async (req, res) => {
           name: row.name,
           description: row.description,
           price: row.price,
-          images: []
+          stock: row.stock,
+          image_main: [],
+          image_sub: []
         };
         products.push(map[row.id]);
       }
 
-      // push รูปลง array
-      if (row.image_url_main) map[row.id].images.push(row.image_url_main);
-      if (row.image_url_sub) map[row.id].images.push(row.image_url_sub);
+      if (row.image_url_main) map[row.id].image_main.push(row.image_url_main);
+      if (row.image_url_sub) map[row.id].image_sub.push(row.image_url_sub);
     });
 
     res.json(products);
