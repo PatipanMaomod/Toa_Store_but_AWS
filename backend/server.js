@@ -13,7 +13,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend')));
 //     res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'index.html'));
 // });
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'management', 'management.html'));
 });
 
 
