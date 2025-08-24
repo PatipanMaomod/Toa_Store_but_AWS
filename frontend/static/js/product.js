@@ -1,11 +1,17 @@
 let cart = [];
 let currentProduct = null;
 
-// Product data with detailed information
+// Product data with detailed information and multiple images
 const productDetails = {
   'Gaming Keyboard': {
     price: '$149.99',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6xRFNeGoO4njAGt0hambMZ28NbNBP4eICHQ&s',
+    images: [
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6xRFNeGoO4njAGt0hambMZ28NbNBP4eICHQ&s',
+      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1595044426077-d36d9236d54a?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=400&h=300&fit=crop'
+    ],
     description: 'Experience the ultimate in gaming performance with our premium mechanical gaming keyboard. Featuring Cherry MX switches, customizable RGB lighting, and premium build quality that will elevate your gaming experience to the next level.',
     features: [
       'Cherry MX Blue mechanical switches',
@@ -19,7 +25,13 @@ const productDetails = {
   },
   'Gaming Mouse': {
     price: '$79.99',
-    image: 'https://th.thermaltake.com/media/catalog/product/cache/6af153fd0a0c509bdfcdfb60a394dd9c/t/o/toughdesk500lrgb_01_1.jpg',
+    images: [
+      'https://th.thermaltake.com/media/catalog/product/cache/6af153fd0a0c509bdfcdfb60a394dd9c/t/o/toughdesk500lrgb_01_1.jpg',
+      'https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1563297007-0686b7003af7?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=400&h=300&fit=crop'
+    ],
     description: 'Precision meets style in this high-performance gaming mouse. With advanced sensor technology and ergonomic design, it\'s built for marathon gaming sessions and competitive play.',
     features: [
       'PixArt 3360 optical sensor',
@@ -33,7 +45,13 @@ const productDetails = {
   },
   'Gaming Headset': {
     price: '$199.99',
-    image: 'https://th.thermaltake.com/media/catalog/product/cache/cc8b24283b13da6bc2ff91682c03b54b/0/1/01_6_1.jpg',
+    images: [
+      'https://th.thermaltake.com/media/catalog/product/cache/cc8b24283b13da6bc2ff91682c03b54b/0/1/01_6_1.jpg',
+      'https://images.unsplash.com/photo-1599669454699-248893623440?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=300&fit=crop'
+    ],
     description: 'Immerse yourself in crystal-clear audio with our premium gaming headset. Featuring 7.1 surround sound, noise-cancelling microphone, and comfort-focused design for extended gaming sessions.',
     features: [
       '7.1 virtual surround sound',
@@ -125,11 +143,27 @@ function openProductPopup(productName) {
   currentProduct = productName;
   
   // Update popup content
-  document.getElementById('popup-img').src = product.image;
-  document.getElementById('popup-img').alt = productName;
   document.getElementById('popup-title').textContent = productName;
   document.getElementById('popup-price').textContent = product.price;
   document.getElementById('popup-description').textContent = product.description;
+  
+  // Set main image
+  const mainImg = document.getElementById('popup-main-img');
+  mainImg.src = product.images[0];
+  mainImg.alt = productName;
+  
+  // Create thumbnail images
+  const thumbnailsContainer = document.getElementById('popup-thumbnails');
+  thumbnailsContainer.innerHTML = '';
+  
+  product.images.forEach((imageUrl, index) => {
+    const thumbnail = document.createElement('img');
+    thumbnail.src = imageUrl;
+    thumbnail.alt = `${productName} view ${index + 1}`;
+    thumbnail.className = `popup-thumbnail ${index === 0 ? 'active' : ''}`;
+    thumbnail.onmouseenter = () => switchMainImage(imageUrl, thumbnail);
+    thumbnailsContainer.appendChild(thumbnail);
+  });
   
   // Update features list
   const featuresContainer = document.getElementById('popup-features');
@@ -143,6 +177,17 @@ function openProductPopup(productName) {
   // Show popup
   document.getElementById('popup-overlay').classList.add('active');
   document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function switchMainImage(imageUrl, thumbnailElement) {
+  // Update main image
+  document.getElementById('popup-main-img').src = imageUrl;
+  
+  // Update active thumbnail
+  document.querySelectorAll('.popup-thumbnail').forEach(thumb => {
+    thumb.classList.remove('active');
+  });
+  thumbnailElement.classList.add('active');
 }
 
 function closeProductPopup() {
