@@ -1,52 +1,62 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>หน้าแรก | ร้านขายโต๊ะ (ตัวอย่าง)</title>
-  <link rel="stylesheet" href="/static/css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Page</title>
+    <link rel="stylesheet" href="\test\style.css">
 </head>
 <body>
-  <a href="#main" class="skip-link">ข้ามไปเนื้อหาหลัก</a>
-  <header>
-    <div class="container nav">
-      <div class="brand">ร้านขายโต๊ะ<span class="dot">.</span></div>
-      <nav class="menu">
-        <a href="#products">สินค้า</a>
-        <a href="#about">เกี่ยวกับ</a>
-        <a href="#contact">ติดต่อ</a>
-      </nav>
-    </div>
-  </header>
+    <header>
+        <div class="logo">Teburu </div>
+        <nav class="nav">
+            <ul>
+                <li><a href="index.html" class="link">Home</a></li>
+                <li><a href="product.html" class="link">Products</a></li>
+                <li><a href="#" class="link">Community</a></li>
+                <li><a href="#" class="link">Support</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <main id="main">
     <section class="hero">
-      <div class="container wrap">
-        <h1>โต๊ะดี มีคุณภาพ</h1>
-        <div class="actions">
-          <a class="btn primary" href="#products">ดูสินค้า</a>
+        <div>
+            <h1>Best Your Ultimate Table</h1>
+            <a href="product.html" class="btn">Shop Now</a>
         </div>
-      </div>
     </section>
 
-    <section id="products" class="container">
-      <h2 class="section-title">สินค้าแนะนำ</h2>
-      <div class="grid" id="product-grid">
-      </div>
+    <section class="cards">
+        <div class="card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6xRFNeGoO4njAGt0hambMZ28NbNBP4eICHQ&s" alt="Product 1">
+            <div class="card-content">
+                <h3>Gaming Keyboard</h3>
+                <p>High performance mechanical keyboard.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://th.thermaltake.com/media/catalog/product/cache/6af153fd0a0c509bdfcdfb60a394dd9c/t/o/toughdesk500lrgb_01_1.jpg" alt="Product 2">
+            <div class="card-content">
+                <h3>Gaming Mouse</h3>
+                <p>Precision tracking and RGB lighting.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://th.thermaltake.com/media/catalog/product/cache/cc8b24283b13da6bc2ff91682c03b54b/0/1/01_6_1.jpg" alt="Product 3">
+            <div class="card-content">
+                <h3>Gaming Headset</h3>
+                <p>Immersive surround sound experience.</p>
+            </div>
+        </div>
     </section>
 
-
-    <section id="contact" class="container">
-      <h2 class="section-title">ติดต่อเรา</h2>
-      <p class="about">โทร: 081-xxx-xxxx · อีเมล: hello AWS @example.com</p>
-    </section>
-
-  </main>
-
-  <footer>
-    <div class="container">© <span id="y"></span> ร้านขายโต๊ะ</div>
-  </footer>
-
-  <script src="/static/js/products.js" defer></script>
+    <footer>
+        <p>&copy; 2025 Teburu </p>
+    </footer>
+    </p>
 </body>
+
 </html>
