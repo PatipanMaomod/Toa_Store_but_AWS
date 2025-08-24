@@ -71,7 +71,6 @@ app.post('/api/upload-to-s3', upload.single('file'), async (req, res) => {
       Key: key,
       Body: file.buffer,
       ContentType: file.mimetype
-      // ACL: 'public-read'  // ถ้าอยากให้ไฟล์เปิดดูได้ทันที
     });
 
     await s3.send(command);
@@ -83,6 +82,44 @@ app.post('/api/upload-to-s3', upload.single('file'), async (req, res) => {
     res.status(500).json({ error: 'Upload failed' });
   }
 });
+
+
+// ---------- API Upload Multiple Images to S3 ----------
+const uploadMany = multer({ storage: multer.memoryStorage() });
+
+app.post('/api/upload-multiple-to-s3', uploadMany.array('files', 10), async (req, res) => {
+  try {
+    const files = req.files;
+    if (!files || files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+
+    const uploadedFiles = [];
+
+    for (const file of files) {
+      const key = `pro_images_S3/${Date.now()}-${file.originalname}`;
+      const command = new PutObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      });
+
+      await s3.send(command);
+
+      const publicUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+      uploadedFiles.push({ fileName: file.originalname, url: publicUrl });
+    }
+
+    res.json({ uploaded: uploadedFiles });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Multiple upload failed' });
+  }
+});
+
+
+
 
 
 
