@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products - Teburu</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b0c10;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #121318;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffd369;
+    }
+
+    .nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .nav a:hover {
+      color: #ffd369;
+    }
+
+    /* cart button */
+    .cart {
+      position: relative;
+      cursor: pointer;
+      font-size: 18px;
+      color: #ffd369;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background: red;
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 50%;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .products-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px 40px;
+    }
+
+    .card {
+      background: #121318;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .card h3 {
+      margin: 15px 0 8px;
+      color: #ffd369;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .card button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #ffd369;
+      color: #000;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .card button:hover {
+      background: #e0b84c;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin: 30px auto;
+      padding: 10px 20px;
+      background: #ffd369;
+      color: #000;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .back-button:hover {
+      background: #e0b84c;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #121318;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    /* cart panel */
+    .cart-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 350px;
+      height: 100%;
+      background: #1a1c22;
+      color: #fff;
+      transition: 0.3s;
+      padding: 20px;
+      overflow-y: auto;
+      z-index: 200;
+    }
+
+    .cart-panel.active {
+      right: 0;
+    }
+
+    .cart-panel h2 {
+      margin-bottom: 15px;
+      text-align: center;
+      color: #ffd369;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+      border-bottom: 1px solid #333;
+      padding-bottom: 8px;
+    }
+
+    .checkout-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: #ffd369;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .checkout-btn:hover {
+      background: #e0b84c;
+    }
+  </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Teburu</div>
+        <nav class="nav">
+            <ul>
+                <li><a href="index.html" class="link">Home</a></li>
+                <li><a href="product.html" class="link">Products</a></li>
+                <li><a href="#" class="link">Community</a></li>
+                <li><a href="#" class="link">Support</a></li>
+            </ul>
+        </nav>
+        <div class="cart" onclick="toggleCart()">
+          🛒 Cart <span class="cart-count" id="cart-count">0</span>
+        </div>
+    </header>
+
+  <h1>Our Products</h1>
+
+  <div class="products-container">
+    <div class="card">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6xRFNeGoO4njAGt0hambMZ28NbNBP4eICHQ&s" alt="Gaming Keyboard">
+      <h3>Gaming Keyboard</h3>
+      <p>High performance mechanical keyboard.</p>
+      <button onclick="addToCart('Gaming Keyboard')">Add to Cart</button>
+    </div>
+    <div class="card">
+      <img src="https://th.thermaltake.com/media/catalog/product/cache/6af153fd0a0c509bdfcdfb60a394dd9c/t/o/toughdesk500lrgb_01_1.jpg" alt="Gaming Mouse">
+      <h3>Gaming Mouse</h3>
+      <p>Precision tracking and RGB lighting.</p>
+      <button onclick="addToCart('Gaming Mouse')">Add to Cart</button>
+    </div>
+    <div class="card">
+      <img src="https://th.thermaltake.com/media/catalog/product/cache/cc8b24283b13da6bc2ff91682c03b54b/0/1/01_6_1.jpg" alt="Gaming Headset">
+      <h3>Gaming Headset</h3>
+      <p>Immersive surround sound experience.</p>
+      <button onclick="addToCart('Gaming Headset')">Add to Cart</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;">
+    <a class="back-button" href="index.html">Back to Home</a>
+  </div>
+
+  <!-- cart panel -->
+  <div class="cart-panel" id="cart-panel">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <button class="checkout-btn" onclick="checkout()">Checkout</button>
+  </div>
+
+  <footer>
+    © 2025 Teburu
+  </footer>
+
+  <script>
+    let cart = [];
+
+    function addToCart(product) {
+      cart.push(product);
+      document.getElementById('cart-count').textContent = cart.length;
+      renderCart();
+    }
+
+    function renderCart() {
+      let cartItems = document.getElementById('cart-items');
+      cartItems.innerHTML = '';
+      cart.forEach((item, index) => {
+        cartItems.innerHTML += `
+          <div class="cart-item">
+            <span>${item}</span>
+            <button onclick="removeFromCart(${index})" style="background:red; color:#fff; border:none; padding:2px 6px; border-radius:4px; cursor:pointer;">X</button>
+          </div>
+        `;
+      });
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      document.getElementById('cart-count').textContent = cart.length;
+      renderCart();
+    }
+
+    function toggleCart() {
+      document.getElementById('cart-panel').classList.toggle('active');
+    }
+
+    function checkout() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+      } else {
+        alert("Proceeding to checkout with: " + cart.join(", "));
+        // คุณสามารถ redirect ไป checkout.html ได้
+        window.location.href = "checkout.html";
+      }
+    }
+  </script>
+</body>
+</html>

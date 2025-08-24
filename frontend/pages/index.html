@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>หน้าแรก | ร้านขายโต๊ะ (ตัวอย่าง)</title>
+  <link rel="stylesheet" href="style.csss">
+</head>
+<body>
+  <a href="#main" class="skip-link">ข้ามไปเนื้อหาหลัก</a>
+  <header>
+    <div class="container nav">
+      <div class="brand">ร้านขายโต๊ะ<span class="dot">.</span></div>
+      <nav class="menu">
+        <a href="#products">สินค้า</a>
+        <a href="#about">เกี่ยวกับ</a>
+        <a href="#contact">ติดต่อ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container wrap">
+        <h1>โต๊ะดี มีคุณภาพ</h1>
+        <div class="actions">
+          <a class="btn primary" href="#products">ดูสินค้า</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="products" class="container">
+      <h2 class="section-title">สินค้าแนะนำ</h2>
+      <div class="grid" id="product-grid">
+      </div>
+    </section>
+
+
+    <section id="contact" class="container">
+      <h2 class="section-title">ติดต่อเรา</h2>
+      <p class="about">โทร: 081-xxx-xxxx · อีเมล: hello AWS @example.com</p>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">© <span id="y"></span> ร้านขายโต๊ะ</div>
+  </footer>
+
+  <script src="/static/js/products.js" defer></script>
+</body>
+</html>
