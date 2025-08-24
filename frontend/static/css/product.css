@@ -474,34 +474,6 @@ footer {
   box-shadow: 0 10px 25px rgba(255, 211, 105, 0.4);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .products-container {
-    grid-template-columns: 1fr;
-    padding: 20px;
-  }
-  
-  header {
-    padding: 15px 20px;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .nav ul {
-    gap: 20px;
-  }
-  
-  h1 {
-    font-size: 2rem;
-    margin: 40px 0 30px;
-  }
-  
-  .cart-panel {
-    width: 100%;
-    right: -100%;
-  }
-}
-
 /* Product Popup Modal */
 .popup-overlay {
   position: fixed;
@@ -527,7 +499,7 @@ footer {
   backdrop-filter: blur(20px);
   border-radius: 20px;
   border: 1px solid rgba(255, 211, 105, 0.2);
-  max-width: 800px;
+  max-width: 1000px;
   width: 90%;
   max-height: 90%;
   position: relative;
@@ -583,18 +555,55 @@ footer {
   height: 100%;
 }
 
+.popup-left {
+  display: flex;
+  gap: 20px;
+}
+
+.popup-thumbnails {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 80px;
+}
+
+.popup-thumbnail {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.popup-thumbnail:hover {
+  opacity: 1;
+  border-color: rgba(255, 211, 105, 0.5);
+  transform: scale(1.05);
+}
+
+.popup-thumbnail.active {
+  opacity: 1;
+  border-color: #ffd369;
+  box-shadow: 0 0 10px rgba(255, 211, 105, 0.3);
+}
+
 .popup-image {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 15px;
   overflow: hidden;
+  position: relative;
 }
 
 .popup-image img {
   width: 100%;
-  height: 300px;
+  height: 350px;
   object-fit: cover;
   border-radius: 15px;
   transition: all 0.3s ease;
@@ -605,6 +614,7 @@ footer {
   flex-direction: column;
   justify-content: space-between;
   color: #fff;
+  overflow-y: auto;
 }
 
 .popup-details h2 {
@@ -722,12 +732,46 @@ footer {
   box-shadow: 0 10px 25px rgba(255, 211, 105, 0.4);
 }
 
-/* Popup Responsive */
+/* Responsive Design */
 @media (max-width: 768px) {
+  .products-container {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  
+  header {
+    padding: 15px 20px;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .nav ul {
+    gap: 20px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    margin: 40px 0 30px;
+  }
+  
+  .cart-panel {
+    width: 100%;
+    right: -100%;
+  }
+
   .popup-content {
     grid-template-columns: 1fr;
     gap: 20px;
     padding: 20px;
+  }
+  
+  .popup-left {
+    flex-direction: column;
+  }
+
+  .popup-thumbnails {
+    flex-direction: row;
+    justify-content: center;
   }
   
   .popup-image img {
