@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teburu</title>
+    <link rel="stylesheet" href="\static\css\Pages\home.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">Teburu </div>
+        <nav class="nav">
+            <ul>
+                <li><a href="product" class="link">Products</a></li>
+                <li><a href="Community" class="link">Community</a></li>
+                <li><a href="Support" class="link">Support</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <button class="btn" onclick="openModal('signinModal')">SIGN IN</button>
+            <button class="btn" onclick="openModal('registerModal')">JOIN US</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div>
+            <h1>Best Your Ultimate Table</h1>
+            <a href="product" class="btn">Shop Now</a>
+        </div>
+    </section>
+
+    <!-- SIGN IN Modal -->
+    <div id="signinModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('signinModal')">&times;</span>
+            <h2>Sign In</h2>
+            <input type="email" placeholder="Email Address *">
+            <input type="password" placeholder="Password *">
+            <label><input type="checkbox"> Keep me logged in</label>
+            <button>SUBMIT</button>
+        </div>
+    </div>
+
+    <!-- REGISTER Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Join Us</h2>
+            <input type="email" placeholder="Email Address *">
+            <input type="text" placeholder="First Name *">
+            <input type="text" placeholder="Last Name *">
+            <select>
+                <option>Thailand</option>
+                <option>USA</option>
+                <option>Japan</option>
+                <option>Other</option>
+            </select>
+            <input type="password" placeholder="Password *">
+            <input type="password" placeholder="Confirm Password *">
+            <label><input type="checkbox" checked> I agree to the Terms and Conditions</label>
+            <button>SUBMIT</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Teburu </p>
+    </footer>
+
+
+</body>
+<script rel="script" href="/static/js/Pages/home.js"></script>
+</html>

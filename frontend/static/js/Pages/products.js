@@ -18,13 +18,13 @@ function addToCart(product) {
   cart.push(product);
   document.getElementById('cart-count').textContent = cart.length;
   renderCart();
-
+  
   // Add success animation
   const button = event.target;
   const originalText = button.textContent;
   button.textContent = '✓ Added!';
   button.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
-
+  
   setTimeout(() => {
     button.textContent = originalText;
     button.style.background = 'linear-gradient(45deg, #ffd369, #ff6b6b)';
@@ -34,19 +34,19 @@ function addToCart(product) {
 function renderCart() {
   let cartItems = document.getElementById('cart-items');
   cartItems.innerHTML = '';
-
+  
   if (cart.length === 0) {
     cartItems.innerHTML = '<p style="text-align: center; color: #aaa; margin: 20px 0;">Your cart is empty</p>';
     return;
   }
-
+  
   cart.forEach((item, index) => {
     cartItems.innerHTML += `
-          <div class="cart-item">
-            <span>${item}</span>
-            <button onclick="removeFromCart(${index})" title="Remove item">×</button>
-          </div>
-        `;
+      <div class="cart-item">
+        <span>${item}</span>
+        <button onclick="removeFromCart(${index})" title="Remove item">×</button>
+      </div>
+    `;
   });
 }
 
@@ -66,21 +66,21 @@ function checkout() {
   } else {
     // Pass cart data to checkout page via URL parameters
     const cartData = encodeURIComponent(JSON.stringify(cart));
-    window.location.href = `checkout.html?cart=${cartData}`;
+    window.location.href = `/checkout?cart=${cartData}`;
   }
 }
 
 // Initialize particles when page loads
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
   createParticles();
   renderCart();
 });
 
 // Close cart when clicking outside
-document.addEventListener('click', function (event) {
+document.addEventListener('click', function(event) {
   const cartPanel = document.getElementById('cart-panel');
   const cartButton = document.querySelector('.cart');
-
+  
   if (!cartPanel.contains(event.target) && !cartButton.contains(event.target)) {
     cartPanel.classList.remove('active');
   }
