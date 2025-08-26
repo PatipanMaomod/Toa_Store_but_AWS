@@ -1,101 +1,96 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Management - จัดการสินค้า</title>
-    <meta name="description" content="ระบบจัดการสินค้าสำหรับผู้ดูแลระบบ - เพิ่ม แก้ไข ลบสินค้าได้อย่างง่ายดาย">
+    <meta name="description" content="ระบบจัดการสินค้าสำหรับผู้ดู">
     <link rel="stylesheet" href="/static/css/Pages/management.css">
 </head>
-<body>
 
+<body>
     <div class="bg-particles"></div>
 
     <!-- Header -->
-    <header>
-        <div class="logo">Admin Panel</div>
+    <header class="flex items-center justify-between px-6 py-3 bg-gray-800 text-white">
+        <!-- Logo -->
+        <div class="logo font-bold text-lg">Admin Panel</div>
+
+        <!-- Nav -->
         <nav class="nav">
-            <ul>
-                <li><a href="/" class="link">Home</a></li>
-                <li><a href="product" class="link">Products</a></li>
-                <li><a href="#" class="link">Community</a></li>
-                <li><a href="#" class="link">Support</a></li>
+            <ul class="flex space-x-6">
+                <li><a href="/" class="link hover:text-blue-300">Home</a></li>
+                <li><a href="/products" class="link hover:text-blue-300">Products</a></li>
+                <li><a href="#" class="link hover:text-blue-300">Community</a></li>
+                <li><a href="#" class="link hover:text-blue-300">Support</a></li>
             </ul>
         </nav>
-        <div>
-        </div>
     </header>
 
+    <!-- Search -->
+    <div class="search-bar">
+        <input type="text" placeholder="ค้นหาสินค้า...">
+    </div>
 
     <!-- Main Content -->
     <main class="main">
-        <div class="container">
-            <!-- Products Section -->
-            <section id="products" class="tab-content active">
-                <div class="section-header">
-                    <h1 class="section-title">จัดการสินค้า</h1>
-                    <button id="addProductBtn" class="btn-primary">
-                        <span class="btn-icon">+</span> เพิ่มสินค้า
-                    </button>
-                </div>
-                <div id="productsGrid" class="products-grid">
-                    <!-- Products will be populated by JavaScript -->
-                </div>
-                <div id="emptyState" class="empty-state" style="display: none;">
-                    <div class="empty-text">ยังไม่มีสินค้าในระบบ</div>
-                    <button class="btn-primary" onclick="openProductModal()">เพิ่มสินค้าแรก</button>
-                </div>
-            </section>
+        <div class="products-container" id="product-list-mag"></div>
+
+        <!-- Modal -->
+        <div id="editProductForm" class="modal">
+            <div class="modal-content">
+                <button onclick="closeModal()" class="close">✖</button>
+                </button>
+                <h3 class="font-semibold mt-2">แก้ไขสินค้า</h2>
+                    <p>ข้อความหรือฟอร์มต่างๆ ใส่ตรงนี้ได้เลย</p>
+            </div>
         </div>
+
+
+
+        <!-- <div id="editProductForm" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="modal-content">
+            <button onclick="closeModal()"
+                class="absolute top-2 right-2 text-gray-600 hover:text-red-500 font-bold text-2xl">
+                ✖
+            </button>
+
+            <h2>แก้ไขสินค้า</h2>
+            <label>ชื่อสินค้า *</label>
+            <input type="text" value="iPhone 15 Pro" style="border: 1px solid #00ff00;">
+            <label>รายละเอียดสินค้า</label>
+            <input type="text" value="หน้าจอจาก Apple ใช้ชิป A17 Pro มาพร้อมกล้องที่ทรงพลัง">
+            <div class="category">
+                <label>หมวดหมู่</label>
+                <input type="text" value="Electronics">
+                <label>จำนวน</label>
+                <input type="text" value="25">
+            </div>
+            <div class="upload-area">
+                <span>ลากและวางไฟล์ที่นี่ หรือ</span>
+                <input type="file" multiple style="display: none;">
+                <span>อัปโหลดไฟล์</span>
+                <p>รองรับไฟล์ JPG, PNG, GIF</p>
+            </div>
+            <div class="images">
+                <img src="https://via.placeholder.com/100?text=iPhone" alt="Image 1">
+                <img src="https://via.placeholder.com/100?text=Samsung" alt="Image 2">
+            </div>
+            <div class="buttons">
+                <button class="cancel-btn" onclick="closeModal()">ยกเลิก</button>
+                <button class="save-btn">บันทึก</button>
+            </div>
+        </div>
+
+         </div> -->
+
+
+
+        </div>
+
     </main>
 
-    <!-- Product Modal -->
-    <div id="productModal" class="modal">
-        <div class="modal-overlay" onclick="closeProductModal()"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">เพิ่มสินค้าใหม่</h2>
-                <button class="modal-close" onclick="closeProductModal()">&times;</button>
-            </div>
-            <form id="productForm" class="product-form">
-                <input type="hidden" id="productId">
-                <div class="form-group">
-                    <label for="productName">ชื่อสินค้า</label>
-                    <input type="text" id="productName" required>
-                </div>
-                <div class="form-group">
-                    <label for="productPrice">ราคา (บาท)</label>
-                    <input type="number" id="productPrice" min="0" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label for="productDescription">รายละเอียด</label>
-                    <textarea id="productDescription" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="mainImage">รูปภาพหลัก (เลือกได้ 1 รูป)</label>
-                    <input type="file" id="mainImage" name="image_main" accept="image/*" required>
-                    <div class="image-preview-container" id="mainImagePreview"></div>
-                </div>
-                <div class="form-group">
-                    <label for="additionalImages">รูปภาพเพิ่มเติม (เลือกได้หลายรูป)</label>
-                    <input type="file" id="additionalImages" name="images_additional" accept="image/*" multiple>
-                    <div class="image-preview-container" id="additionalImagesPreview"></div>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeProductModal()">ยกเลิก</button>
-                    <button type="submit" class="btn-primary">บันทึก</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Toast -->
-    <div id="toast" class="toast">
-        <div class="toast-content">
-            <div id="toastTitle" class="toast-title"></div>
-            <div id="toastMessage" class="toast-message"></div>
-        </div>
-    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -103,9 +98,8 @@
             <div class="footer-content">&copy; 2024 Admin Management</div>
         </div>
     </footer>
-
-    <script src="/static/js/API/loadProducts.js"></script>
-    <script src="/static/js/Pages/management.js"></script>
 </body>
-</html>
+<script src="/static/js/API/API_loadPro.js"></script>
+<script src="/static/js/Pages/management.js"></script>
 
+</html>
