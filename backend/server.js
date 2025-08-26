@@ -21,7 +21,12 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'home.html'));
 });
 
-app.get('/product', (req, res) => {
+// product list
+app.get('/products', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'products.html'));
+});
+
+app.get('/product/:id', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'product.html'));
 });
 
@@ -43,9 +48,13 @@ app.get('/login', (req, res) => {
 
 
 
+
+
 app.get('/admin/management', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages','management', 'management.html'));
 });
+
+
 
 
 
@@ -85,6 +94,43 @@ app.get('/api/products', async (req, res) => {
     res.status(500).json({ error: 'Database query failed' });
   }
 });
+
+
+// ---------- API Products:id----------
+app.get('/api/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [rows] = await pool.query(`
+      SELECT p.id, p.name, p.price, p.stock, p.description, pi.image_url_main, pi.image_url_sub
+      FROM products AS p
+      LEFT JOIN product_image AS pi ON p.id = pi.product_id
+      WHERE p.id = ?
+    `, [id]);
+
+    if (rows.length === 0) return res.status(404).json({ error: 'Product not found' });
+
+    const product = {
+      id: rows[0].id,
+      name: rows[0].name,
+      description: rows[0].description,
+      price: rows[0].price,
+      stock: rows[0].stock,
+      image_main: [],
+      image_sub: []
+    };
+
+    rows.forEach(row => {
+      if (row.image_url_main) product.image_main.push(row.image_url_main);
+      if (row.image_url_sub) product.image_sub.push(row.image_url_sub);
+    });
+
+    res.json(product);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
 
 
 
