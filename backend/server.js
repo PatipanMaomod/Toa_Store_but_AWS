@@ -212,7 +212,7 @@ app.post('/api/upload-multiple-to-s3', uploadMany.array('files', 10), async (req
 // ---------- API Admin Login ----------
 app.post('/api/admin/login', async (req, res) => {
   try {
-    const { username, password } = req.body; // จะไม่ undefined แล้ว
+    const { username, password } = req.body; ว
 
     if (!username || !password) {
       return res.status(400).json({ error: 'กรุณากรอก username และ password' });
@@ -235,8 +235,6 @@ app.post('/api/admin/login', async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ error: 'รหัสผ่านไม่ถูกต้อง' });
     }
-
-    // ✅ login สำเร็จ
     res.json({
       message: 'เข้าสู่ระบบสำเร็จ',
       adminId: admin.id,
