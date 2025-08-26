@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teburu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="\static\css\Pages\home.css">
 </head>
 
@@ -43,8 +44,16 @@
             <span class="close" onclick="closeModal('signinModal')">&times;</span>
             <h3>Sign In</h3>
             <input type="email" placeholder="Email Address *">
-            <input type="password" placeholder="Password *">
-            <label><input type="checkbox"> Keep me logged in</label>
+
+            <div class="password-container">
+            <input type="password" id="signinPassword" placeholder="Password *">
+            <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('signinPassword', this)"></i>
+            </div>
+
+            <p class="switch-link">
+            <a href="#" onclick="switchModal('signinModal','registerModal')">Register?</a>
+            </p>
+
             <button onclick="handleLogin()">SUBMIT</button>
         </div>
     </div>
@@ -57,24 +66,42 @@
             <input type="text" placeholder="First Name *">
             <input type="text" placeholder="Last Name *">
             <input type="email" placeholder="Email Address *">
-            <input type="password" placeholder="Password *">
-            <input type="password" placeholder="Confirm Password *">
-            <label><input type="checkbox" checked> I agree to the Terms and Conditions</label>
+
+            <div class="password-container">
+            <input type="password" id="regPassword" placeholder="Password *">
+            <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('regPassword', this)"></i>
+            </div>
+
+            <div class="password-container">
+            <input type="password" id="regConfirmPassword" placeholder="Confirm Password *">
+            <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('regConfirmPassword', this)"></i>
+            </div>
+
+            <p class="switch-link">
+            <span class="switch-text">Already have an account?</span>
+            <a href="#" onclick="switchModal('registerModal','signinModal')">Sign In</a>
+            </p>
+
             <button onclick="handleLogin()">SUBMIT</button>
         </div>
     </div>
 
-    <div id="Sign In Admin" class="modal">
+    <!-- Admin Modal -->
+    <div id="SignInAdmin" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal('Sign In Admin')">&times;</span>
+            <span class="close" onclick="closeModal('SignInAdmin')">&times;</span>
             <h3>Sign In Admin</h3>
             <input type="email" placeholder="Email Address *">
-            <input type="password" placeholder="Password *">
+
+            <div class="password-container">
+            <input type="password" id="adminPassword" placeholder="Password *">
+            <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('adminPassword', this)"></i>
+            </div>
+
             <label><input type="checkbox"> Keep me logged in</label>
             <button onclick="handleLogin()">SUBMIT</button>
         </div>
     </div>
-
 
     <div class="product-section">
         <!-- Product list -->
