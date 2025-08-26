@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Login - Teburu</title>
   <link rel="stylesheet" href="/static/css/Pages/logAndRe.css">
 </head>
+
 <body>
   <div class="login-container">
     <h2>เข้าสู่ระบบผู้ดูแลระบบ</h2>
     <form id="adminLoginForm">
       <div class="form-group">
-        <label for="adminEmail">อีเมล</label>
-        <input type="email" id="adminEmail" required placeholder="Email Address *">
+        <label for="adminUsername">ชื่อผู้ใช้</label>
+        <input type="text" id="adminUsername" required placeholder="Username *">
       </div>
       <div class="form-group">
         <label for="adminPassword">รหัสผ่าน</label>
@@ -20,23 +22,15 @@
       </div>
       <button type="submit" class="btn">เข้าสู่ระบบ</button>
     </form>
+    <p id="loginMsg" style="color:red;margin-top:10px;"></p>
+
+    <div style="margin-top:20px; text-align:center;">
+      <p>ยังไม่มีบัญชี?
+        <a href="/admin/register" class="link">สมัครสมาชิก</a>
+      </p>
+    </div>
   </div>
-
-  <script>
-    document.getElementById("adminLoginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("adminEmail").value;
-      const password = document.getElementById("adminPassword").value;
-
-      // 🔥 TODO: เรียก API /api/admin/login
-      if (email && password) {
-        localStorage.setItem("user", JSON.stringify({ email, role: "admin" }));
-        alert("เข้าสู่ระบบผู้ดูแลสำเร็จ");
-        window.location.href = "/admin/management"; // redirect ไปหน้า admin
-      } else {
-        alert("กรุณากรอกข้อมูลให้ครบ");
-      }
-    });
-  </script>
 </body>
+<script src="/static/js/Pages/admin_login.js"></script>
+
 </html>

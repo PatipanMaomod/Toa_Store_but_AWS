@@ -8,7 +8,14 @@ const path = require('path');
 const multer = require('multer');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
+const bcrypt = require('bcrypt');
+
 const app = express();
+
+// ---------- Middleware ----------
+app.use(cors());
+app.use(express.json());            
+app.use(express.urlencoded({ extended: true }));
 
 // ---------- S3 Client ----------
 const s3 = new S3Client({ region: process.env.AWS_REGION });
@@ -46,6 +53,9 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'login.html'));
 });
 
+app.get('/admin/register', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages','management', 'admin_register.html'));
+});
 
 
 
@@ -199,7 +209,76 @@ app.post('/api/upload-multiple-to-s3', uploadMany.array('files', 10), async (req
 
 
 
+// ---------- API Admin Login ----------
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { username, password } = req.body; // จะไม่ undefined แล้ว
 
+    if (!username || !password) {
+      return res.status(400).json({ error: 'กรุณากรอก username และ password' });
+    }
+
+    const [rows] = await pool.query(
+      `SELECT id, username, password_hash
+       FROM users
+       WHERE username = ?`,
+      [username]
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({ error: 'ไม่พบ admin หรือสิทธิ์ไม่ถูกต้อง' });
+    }
+
+    const admin = rows[0];
+    const isMatch = await bcrypt.compare(password, admin.password_hash);
+
+    if (!isMatch) {
+      return res.status(401).json({ error: 'รหัสผ่านไม่ถูกต้อง' });
+    }
+
+    // ✅ login สำเร็จ
+    res.json({
+      message: 'เข้าสู่ระบบสำเร็จ',
+      adminId: admin.id,
+      username: admin.username,
+      role: admin.role
+    });
+
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+
+
+
+// ---------- API Admin Register ----------
+app.post('/api/admin/register', async (req, res) => {
+  try {
+    const { f_name, l_name, username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: 'กรุณากรอก username และ password' });
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+
+    await pool.query(
+      `INSERT INTO users (f_name, l_name, username, password_hash) VALUES (?, ?, ?, ?)`,
+      [f_name, l_name, username, hash]
+    );
+
+    res.json({ message: 'Admin register successful' });
+  } catch (err) {
+    console.error("Admin Register error:", err);
+    if (err.code === 'ER_DUP_ENTRY') {
+      res.status(400).json({ error: 'Username นี้มีผู้ใช้แล้ว' });
+    } else {
+      res.status(500).json({ error: 'Database query failed' });
+    }
+  }
+});
 
 
 
