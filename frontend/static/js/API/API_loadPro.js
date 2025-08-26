@@ -1,37 +1,3 @@
-// ================= Cart Shared =================
-let cart = [];
-
-function addToCart(product) {
-  cart.push(product);
-  document.getElementById('cart-count').textContent = cart.length;
-  renderCart();
-}
-
-function renderCart() {
-  const cartItems = document.getElementById('cart-items');
-  cartItems.innerHTML = '';
-  cart.forEach((item, i) => {
-    const div = document.createElement('div');
-    div.className = "cart-item";
-    div.innerHTML = `<span>${item.name} - ฿${item.price}</span>
-                     <button onclick="removeFromCart(${i})">×</button>`;
-    cartItems.appendChild(div);
-  });
-}
-
-function removeFromCart(i) {
-  cart.splice(i, 1);
-  document.getElementById('cart-count').textContent = cart.length;
-  renderCart();
-}
-
-function toggleCart() {
-  document.getElementById('cart-panel').classList.toggle('active');
-}
-
-function checkout() {
-  alert("Checkout process started!");
-}
 
 // ================= Loader แบบ Pro =================
 async function loadPro_pro() {
@@ -68,16 +34,16 @@ async function loadPro_pro() {
       card.appendChild(btn);
 
 
-    // ปุ่ม View Details
-    const viewBtn = document.createElement('button');
-    viewBtn.textContent = "View Details";
-    viewBtn.onclick = () => {
+      // ปุ่ม View Details
+      const viewBtn = document.createElement('button');
+      viewBtn.textContent = "View Details";
+      viewBtn.onclick = () => {
         window.location.href = `/product/${p.id}`;
-    };
-    card.appendChild(viewBtn);
+      };
+      card.appendChild(viewBtn);
 
 
-    container.appendChild(card);
+      container.appendChild(card);
     });
   } catch (err) {
     console.error("โหลดสินค้าล้มเหลว:", err);
@@ -106,11 +72,11 @@ async function loadPor_home() {
       title.textContent = p.name;
       card.appendChild(title);
 
-    //ทำให้คลิกทั้งการ์ดไปยัง /product/:id
+      //ทำให้คลิกทั้งการ์ดไปยัง /product/:id
       card.addEventListener('click', () => {
         window.location.href = `/product/${p.id}`;
       });
-      card.style.cursor = "pointer"; // เปลี่ยนเคอร์เซอร์เมื่อโฮเวอร์
+      card.style.cursor = "pointer";
 
       container.appendChild(card);
     });
@@ -119,6 +85,68 @@ async function loadPor_home() {
   }
 }
 
+
+// ================= Loader แบบ management =================
+
+
+function openModal(product) {
+  const modal = document.getElementById("editProductForm");
+  modal.style.display = "block";
+  
+  if (product) {
+    document.getElementById("editName").value = product.name || "";
+    document.getElementById("editPrice").value = product.price || "";
+  }
+}
+
+function closeModal() {
+  document.getElementById("editProductForm").style.display = "none";
+}
+
+
+async function loadPro_mag() {
+
+  try {
+    const res = await fetch('/api/products');
+    const products = await res.json();
+
+    const container = document.getElementById('product-list-mag');
+    container.innerHTML = '';
+
+    // วาดการ์ดสินค้า
+    products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = "card border rounded p-2 shadow text-center";
+
+      // รูปสินค้า
+      const img = document.createElement('img');
+      img.src = p.image_main[0] ||
+        "https://product-images-toa-shop.s3.ap-northeast-3.amazonaws.com/pro_images_S3/broken-image-example.png";
+      img.className = "w-32 h-32 object-cover mx-auto";
+      card.appendChild(img);
+
+      // ชื่อสินค้า
+      const title = document.createElement('h3');
+      title.textContent = p.name;
+      title.className = "font-semibold mt-2";
+      card.appendChild(title);
+
+      // ปุ่มแก้ไข
+      const editBtn = document.createElement('button');
+      editBtn.textContent = "Edit";
+      editBtn.onclick = () => openModal(p);  
+      card.appendChild(editBtn);
+
+      container.appendChild(card);
+    });
+
+    
+  } catch (err) {
+    console.error("โหลดสินค้าล้มเหลว:", err);
+  }
+}
+
 // ================= Run =================
 loadPor_home();
 loadPro_pro();
+loadPro_mag();  
