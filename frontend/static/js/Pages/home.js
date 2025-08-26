@@ -97,3 +97,4 @@ function switchModal(closeId, openId) {
   document.getElementById(closeId).style.display = "none";
   document.getElementById(openId).style.display = "block";
 }
+

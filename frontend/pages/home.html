@@ -63,9 +63,10 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('registerModal')">&times;</span>
             <h3>Join Us</h3>
-            <input type="text" placeholder="First Name *">
-            <input type="text" placeholder="Last Name *">
-            <input type="email" placeholder="Email Address *">
+            <input type="text" id="firstName" placeholder="First Name *">
+            <input type="text" id="lastName" placeholder="Last Name *">
+            <input type="text" id="phone" placeholder="Phone">
+            <input type="email" id="email" placeholder="Email Address *">
 
             <div class="password-container">
             <input type="password" id="regPassword" placeholder="Password *">
@@ -82,7 +83,7 @@
             <a href="#" onclick="switchModal('registerModal','signinModal')">Sign In</a>
             </p>
 
-            <button onclick="handleLogin()">SUBMIT</button>
+            <button onclick="handleRegister()">SUBMIT</button>
         </div>
     </div>
 
