@@ -79,3 +79,21 @@ function logout() {
 
 // init
 document.addEventListener("DOMContentLoaded", renderAuthButtons);
+//Show-Hide Password
+function togglePassword(inputId, el) {
+  const passwordField = document.getElementById(inputId);
+  if (passwordField.type === "password") {
+    passwordField.type = "text";
+    el.classList.remove("fa-eye");
+    el.classList.add("fa-eye-slash");
+  } else {
+    passwordField.type = "password";
+    el.classList.remove("fa-eye-slash");
+    el.classList.add("fa-eye");
+  }
+}
+//switchModal
+function switchModal(closeId, openId) {
+  document.getElementById(closeId).style.display = "none";
+  document.getElementById(openId).style.display = "block";
+}

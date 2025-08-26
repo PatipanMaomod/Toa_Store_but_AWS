@@ -6,7 +6,6 @@
     --mint: #25ffbe;
 }
 
-
 * {
     margin: 0;
     padding: 0;
@@ -427,10 +426,11 @@ footer {
 .footer-left {
     flex: 1;
     min-width: 250px;
+    text-align: left; 
 }
 
 .footer-logo {
-    width: 150px; /* ปรับขนาดโลโก้ */
+    width: 150px; 
     margin-bottom: 15px;
 }
 
@@ -440,7 +440,7 @@ footer {
 }
 
 .footer-right {
-    flex: 2;
+    flex: 1;
     min-width: 300px;
 }
 
@@ -536,3 +536,41 @@ footer {
     line-height: 1.6;
 }
 /* เหตุผลการขาย */
+/* โชว์-ซ่อนรหัส */
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-container input {
+  width: 100%;
+  padding-right: 40px; /* กันพื้นที่ให้ icon */
+}
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #666;
+  font-size: 18px;
+}
+.toggle-password:hover {
+  color: #000;
+}
+/* โชว์-ซ่อนรหัส */
+/* switch-link */
+.switch-link {
+  margin-top: 15px;
+  font-size: 14px;
+  text-align: center;
+}
+.switch-link .switch-text {
+  color: #555; 
+}
+.switch-link a {
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: none;
+}
+.switch-link a:hover {
+  text-decoration: underline;
+}
