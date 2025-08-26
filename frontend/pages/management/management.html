@@ -1,73 +1,118 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Management - จัดการสินค้า</title>
     <meta name="description" content="ระบบจัดการสินค้าสำหรับผู้ดูแลระบบ - เพิ่ม แก้ไข ลบสินค้าได้อย่างง่ายดาย">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="static/css/Pages/management.css">
+    <link rel="stylesheet" href="/static/css/Pages/management.css">
 </head>
+<body>
 
-<body> <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo"> Admin Panel </div>
-                <nav class="nav"> <button class="nav-btn active" data-tab="products"> จัดการสินค้า </button> </nav>
-            </div>
+    <div class="bg-particles"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">Admin Panel</div>
+        <nav class="nav">
+            <ul>
+                <li><a href="/" class="link">Home</a></li>
+                <li><a href="product" class="link">Products</a></li>
+                <li><a href="#" class="link">Community</a></li>
+                <li><a href="#" class="link">Support</a></li>
+            </ul>
+        </nav>
+        <div class="cart" onclick="toggleCart()">
+            🛒 Cart <span class="cart-count" id="cart-count">0</span>
         </div>
-    </header> <!-- Main Content -->
+    </header>
+
+    <!-- Cart panel -->
+    <div class="cart-panel" id="cart-panel">
+        <h2>🛒 Your Cart</h2>
+        <div id="cart-items"></div>
+        <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+    </div>
+
+    <!-- Main Content -->
     <main class="main">
-        <div class="container"> <!-- Products Section -->
+        <div class="container">
+            <!-- Products Section -->
             <section id="products" class="tab-content active">
                 <div class="section-header">
-                    <h1 class="section-title">จัดการสินค้า</h1> <button id="addProductBtn" class="btn-primary"> <span
-                            class="btn-icon">+</span> เพิ่มสินค้า </button>
+                    <h1 class="section-title">จัดการสินค้า</h1>
+                    <button id="addProductBtn" class="btn-primary">
+                        <span class="btn-icon">+</span> เพิ่มสินค้า
+                    </button>
                 </div>
-                <div id="productsGrid" class="products-grid"> <!-- Products will be populated by JavaScript --> </div>
+                <div id="productsGrid" class="products-grid">
+                    <!-- Products will be populated by JavaScript -->
+                </div>
                 <div id="emptyState" class="empty-state" style="display: none;">
-                    <div class="empty-text">ยังไม่มีสินค้าในระบบ</div> <button class="btn-primary"
-                        onclick="openProductModal()"> เพิ่มสินค้าแรก </button>
+                    <div class="empty-text">ยังไม่มีสินค้าในระบบ</div>
+                    <button class="btn-primary" onclick="openProductModal()">เพิ่มสินค้าแรก</button>
                 </div>
             </section>
         </div>
-    </main> <!-- Product Modal -->
+    </main>
+
+    <!-- Product Modal -->
     <div id="productModal" class="modal">
         <div class="modal-overlay" onclick="closeProductModal()"></div>
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">เพิ่มสินค้าใหม่</h2> <button class="modal-close"
-                    onclick="closeProductModal()">&times;</button>
+                <h2 id="modalTitle">เพิ่มสินค้าใหม่</h2>
+                <button class="modal-close" onclick="closeProductModal()">&times;</button>
             </div>
-            <form id="productForm" class="product-form"> <input type="hidden" id="productId">
-                <div class="form-group"> <label for="productName">ชื่อสินค้า</label> <input type="text" id="productName"
-                        required> </div>
-                <div class="form-group"> <label for="productPrice">ราคา (บาท)</label> <input type="number"
-                        id="productPrice" min="0" step="0.01" required> </div>
-                <div class="form-group"> <label for="productDescription">รายละเอียด</label> <textarea
-                        id="productDescription" rows="3"></textarea> </div>
-                <div class="form-group"> <label for="productImage">รูปภาพ (URL)</label> <input type="url"
-                        id="productImage" required> </div>
-                <div class="form-actions"> <button type="button" class="btn-secondary" onclick="closeProductModal()">
-                        ยกเลิก </button> <button type="submit" class="btn-primary"> บันทึก </button> </div>
+            <form id="productForm" class="product-form">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label for="productName">ชื่อสินค้า</label>
+                    <input type="text" id="productName" required>
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">ราคา (บาท)</label>
+                    <input type="number" id="productPrice" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">รายละเอียด</label>
+                    <textarea id="productDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="mainImage">รูปภาพหลัก (เลือกได้ 1 รูป)</label>
+                    <input type="file" id="mainImage" name="image_main" accept="image/*" required>
+                    <div class="image-preview-container" id="mainImagePreview"></div>
+                </div>
+                <div class="form-group">
+                    <label for="additionalImages">รูปภาพเพิ่มเติม (เลือกได้หลายรูป)</label>
+                    <input type="file" id="additionalImages" name="images_additional" accept="image/*" multiple>
+                    <div class="image-preview-container" id="additionalImagesPreview"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProductModal()">ยกเลิก</button>
+                    <button type="submit" class="btn-primary">บันทึก</button>
+                </div>
             </form>
         </div>
-    </div> <!-- Toast -->
+    </div>
+
+    <!-- Toast -->
     <div id="toast" class="toast">
         <div class="toast-content">
             <div id="toastTitle" class="toast-title"></div>
             <div id="toastMessage" class="toast-message"></div>
         </div>
-    </div> <!-- Footer -->
+    </div>
+
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content"> &copy; 2024 Admin Management </div>
+            <div class="footer-content">&copy; 2024 Admin Management</div>
         </div>
     </footer>
-    <script src="static/js/Pages/management.js"></script>
-    <script src="static/js/Pages/loadProducts.js"></script>
-</body>
 
+    <script src="/static/js/API/loadProducts.js"></script>
+    <script src="/static/js/Pages/management.js"></script>
+</body>
 </html>
+
