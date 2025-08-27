@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Management - จัดการสินค้า</title>
+    <meta name="description" content="ระบบจัดการสินค้าสำหรับผู้ดู">
+    <link rel="stylesheet" href="/static/css/Pages/management.css">
+</head>
+
+<body>
+    <div class="bg-particles"></div>
+
+    <!-- Header -->
+    <header class="flex items-center justify-between px-6 py-3 bg-gray-800 text-white">
+        <!-- Logo -->
+        <div class="logo font-bold text-lg">Admin Panel</div>
+
+        <!-- Nav -->
+        <nav class="nav">
+            <ul class="flex space-x-6">
+                <li><a href="/" class="link hover:text-blue-300">Home</a></li>
+                <li><a href="/products" class="link hover:text-blue-300">Products</a></li>
+                <li><a href="#" class="link hover:text-blue-300">Community</a></li>
+                <li><a href="#" class="link hover:text-blue-300">Support</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="toolbar">
+        <!-- Search -->
+        <div class="search-bar">
+            <input type="text" placeholder="ค้นหาสินค้า...">
+        </div>
+
+        <!-- ปุ่มเพิ่มสินค้าใหม่ -->
+        <div class="actions">
+            <button class="add-btn" onclick="openAddModal()">➕ เพิ่มสินค้าใหม่</button>
+        </div>
+    </div>
+
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="products-container" id="product-list-mag"></div>
+
+        <!-- Modal -->
+        <div id="editProductForm" class="modal">
+            <div class="modal-content">
+                <span onclick="closeModal()" class="close">✖</span>
+
+                <h2>แก้ไขข้อมูลสินค้า</h2>
+
+                <form id="productForm">
+                    <label>ชื่อสินค้า *</label>
+                    <input type="text" id="editName" placeholder="ชื่อสินค้า...">
+
+                    <label>รายละเอียดสินค้า</label>
+                    <textarea id="editDesc" rows="3" placeholder="รายละเอียดสินค้า..."></textarea>
+
+                    <div class="category">
+                        <div>
+                            <label>Price</label>
+                            <input type="text" id="editPrice" placeholder="Price...">
+                        </div>
+                        <div>
+                            <label>จำนวนสต็อก *</label>
+                            <input type="number" id="editQty" placeholder="0">
+                        </div>
+
+                    </div>
+
+                    <div class="upload-area">
+                        <label for="editImages" class="custom-upload">
+                            ลากและวางไฟล์ที่นี่ หรือ <span class="upload-btn">เลือกไฟล์</span>
+                        </label>
+                        <input type="file" id="editImages" multiple hidden>
+                        <p>รองรับไฟล์ JPG, PNG, GIF</p>
+
+                    </div>
+
+                    <div class="images" id="editPreview">
+                        <!-- Preview รูปจะถูกใส่ที่นี่ -->
+                    </div>
+                    <div class="buttons">
+                        <button type="button" class="cancel-btn" onclick="closeModal()">ยกเลิก</button>
+                        <button type="submit" class="save-btn">บันทึกข้อมูล</button>
+                    </div>
+
+
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Modal Add Product -->
+        <div id="addProductForm" class="modal">
+            <div class="modal-content">
+                <span onclick="closeAddModal()" class="close">✖</span>
+
+                <h2>เพิ่มสินค้าใหม่</h2>
+
+                <form id="newProductForm">
+                    <label>ชื่อสินค้า *</label>
+                    <input type="text" id="newName" placeholder="ชื่อสินค้า..." required>
+
+                    <label>รายละเอียดสินค้า</label>
+                    <textarea id="newDesc" rows="3" placeholder="รายละเอียดสินค้า..."></textarea>
+
+                    <div class="category">
+                        <div>
+                            <label>Price</label>
+                            <input type="text" id="newPrice" placeholder="Price..." required>
+                        </div>
+                        <div>
+                            <label>จำนวนสต็อก *</label>
+                            <input type="number" id="newQty" placeholder="0" required>
+                        </div>
+                    </div>
+
+                    <div class="upload-area">
+                        <label for="newImages" class="custom-upload">
+                            ลากและวางไฟล์ที่นี่ หรือ <span class="upload-btn">เลือกไฟล์</span>
+                        </label>
+                        <input type="file" id="newImages" multiple hidden>
+                        <p>รองรับไฟล์ JPG, PNG, GIF</p>
+                    </div>
+
+                    <div class="images" id="newPreview">
+                        <!-- Preview รูปใหม่ -->
+                    </div>
+
+                    <div class="buttons">
+                        <button type="button" class="cancel-btn" onclick="closeAddModal()">ยกเลิก</button>
+                        <button type="submit" class="save-btn">บันทึกสินค้าใหม่</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <p id="toastMessage">ข้อความ</p>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">&copy; 2024 Admin Management</div>
+        </div>
+    </footer>
+</body>
+<script src="/static/js/API/API_loadPro.js"></script>
+<script src="/static/js/Pages/management.js"></script>
+
+</html>
