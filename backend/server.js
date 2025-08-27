@@ -4,24 +4,30 @@ const express = require('express');
 const cors = require('cors');
 const pool = require('./db');
 const path = require('path');
-
 const multer = require('multer');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-
 const bcrypt = require('bcrypt');
+
+
+const session = require('express-session');
 
 const app = express();
 
+
+
+
+// ---------- Session Middleware ----------
 app.use(session({
   key: 'sessionId',
   secret: process.env.SESSION_SECRET || 'supersecret',
-  store: store,
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
     secure: false, // true ถ้าใช้ https
-    maxAge: 1000 * 60 * 60 // 1 ชั่วโมง
+    // maxAge: 1000 * 60 * 60 // 1 ชั่วโมง
+    maxAge: 1000 * 60 // 1 นาที
+
   }
 }));
 
@@ -29,6 +35,14 @@ app.use(session({
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+function requireAdmin(req, res, next) {
+  if (req.session && req.session.role === "admin") {
+    next(); // ผ่าน ✅
+  } else {
+    res.redirect("/admin/login");   // ไปหน้า login
+  }
+}
+
 
 // ---------- S3 Client ----------
 const s3 = new S3Client({ region: process.env.AWS_REGION });
@@ -36,16 +50,19 @@ const s3 = new S3Client({ region: process.env.AWS_REGION });
 // ---------- Static ----------
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
-// ---------- Pages ----------
+// ---------- Routes ----------
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'home.html'));
 });
 
 app.get('/header', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages','management', 'header.html'));
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'header.html'));
+});
+app.get('/admin/header', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_header.html'));
 });
 
-// product list
+
 app.get('/products', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'products.html'));
 });
@@ -54,9 +71,6 @@ app.get('/product/:id', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'product.html'));
 });
 
-app.get('/admin/product/:id/edit', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'edit_pro.html'));
-});
 
 
 app.get('/checkout', (req, res) => {
@@ -76,34 +90,55 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/api/customers/me', (req, res) => {
-  if (!req.session.customerId) {
-    return res.status(401).json({ error: 'Not logged in' });
-  }
+  if (!req.session.customerId) return res.status(401).json({ error: "Not logged in" });
   res.json({
     customerId: req.session.customerId,
-    email: req.session.email
+    email: req.session.email,
+    firstName: req.session.firstName
+  });
+});
+
+app.get('/api/admin/me', (req, res) => {
+  if (!req.session.adminId || req.session.role !== "admin") {
+    return res.status(401).json({ error: "Not logged in" });
+  }
+  res.json({
+    adminId: req.session.adminId,
+    username: req.session.username,
+    role: req.session.role
   });
 });
 
 app.post('/api/customers/logout', (req, res) => {
   req.session.destroy(err => {
-    if (err) return res.status(500).json({ error: 'Logout failed' });
-    res.clearCookie('sessionId');
-    res.json({ message: 'Logout success' });
+    if (err) return res.status(500).json({ error: "Logout failed" });
+    res.clearCookie("sessionId");
+    res.json({ message: "Logout success" });
   });
 });
 
-
+app.post('/api/admin/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) return res.status(500).json({ error: "Logout failed" });
+    res.clearCookie("sessionId");
+    res.json({ message: "Logout success" });
+  });
+});
 
 app.get('/admin/register', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_register.html'));
 });
 
-
-app.get('/admin/management', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'management.html'));
+app.get("/admin/management", requireAdmin, (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend", "pages", "management", "management.html"));
 });
 
+app.get('/admin/product/:id', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_product.html'));
+});
+app.get('/admin/products', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_products.html'));
+});
 
 
 
@@ -342,45 +377,34 @@ app.post('/api/upload-multiple-to-s3', uploadMany.array('files', 10), async (req
 
 
 
+
 // ---------- API Admin Login ----------
 app.post('/api/admin/login', async (req, res) => {
-  try {
-    const { username, password } = req.body; ว
+  const { username, password } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({ error: 'กรุณากรอก username และ password' });
-    }
+  const [rows] = await pool.query(
+    `SELECT id, username, password_hash, role FROM users WHERE username = ?`,
+    [username]
+  );
 
-    const [rows] = await pool.query(
-      `SELECT id, username, password_hash
-       FROM users
-       WHERE username = ?`,
-      [username]
-    );
+  if (rows.length === 0) return res.status(401).json({ error: "ไม่พบ admin" });
 
-    if (rows.length === 0) {
-      return res.status(401).json({ error: 'ไม่พบ admin หรือสิทธิ์ไม่ถูกต้อง' });
-    }
+  const admin = rows[0];
+  const isMatch = await bcrypt.compare(password, admin.password_hash);
+  if (!isMatch) return res.status(401).json({ error: "รหัสผ่านไม่ถูกต้อง" });
 
-    const admin = rows[0];
-    const isMatch = await bcrypt.compare(password, admin.password_hash);
+  // เก็บ session
+  req.session.adminId = admin.id;
+  req.session.username = admin.username;
+  req.session.role = admin.role || "admin"; 
 
-    if (!isMatch) {
-      return res.status(401).json({ error: 'รหัสผ่านไม่ถูกต้อง' });
-    }
-    res.json({
-      message: 'เข้าสู่ระบบสำเร็จ',
-      adminId: admin.id,
-      username: admin.username,
-      role: admin.role
-    });
-
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({ error: 'Database query failed' });
-  }
+  res.json({
+    message: "เข้าสู่ระบบสำเร็จ",
+    adminId: admin.id,
+    username: admin.username,
+    role: admin.role || "admin"
+  });
 });
-
 
 
 
@@ -414,46 +438,29 @@ app.post('/api/admin/register', async (req, res) => {
 
 // ---------- API Login (Customer) ----------
 app.post('/api/customers/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
+  const [rows] = await pool.query(
+    "SELECT id, first_name, last_name, email, password FROM customers WHERE email = ?",
+    [username]
+  );
+  if (rows.length === 0) return res.status(401).json({ error: "ไม่พบลูกค้า" });
 
-    if (!username || !password) {
-      return res.status(400).json({ error: 'กรุณากรอก username และ password' });
-    }
+  const customer = rows[0];
+  const isMatch = await bcrypt.compare(password, customer.password);
+  if (!isMatch) return res.status(401).json({ error: "รหัสผ่านไม่ถูกต้อง" });
 
-    const [rows] = await pool.query(
-      `SELECT id, first_name, last_name, email, password 
-       FROM customers 
-       WHERE email = ?`, [username]
-    );
+  // สร้าง session
+  req.session.customerId = customer.id;
+  req.session.email = customer.email;
+  req.session.firstName = customer.first_name;
 
-    if (rows.length === 0) {
-      return res.status(401).json({ error: 'ไม่พบลูกค้า' });
-    }
-
-    const customer = rows[0];
-    const isMatch = await bcrypt.compare(password, customer.password);
-
-    if (!isMatch) {
-      return res.status(401).json({ error: 'รหัสผ่านไม่ถูกต้อง' });
-    }
-
-    // ✅ เก็บ session
-    req.session.customerId = customer.id;
-    req.session.email = customer.email;
-
-    res.json({
-      message: 'เข้าสู่ระบบสำเร็จ',
-      customerId: customer.id,
-      email: customer.email,
-      firstName: customer.first_name,
-      lastName: customer.last_name
-    });
-
-  } catch (err) {
-    console.error("Customer Login error:", err);
-    res.status(500).json({ error: 'Database query failed' });
-  }
+  res.json({
+    message: "เข้าสู่ระบบสำเร็จ",
+    customerId: customer.id,
+    email: customer.email,
+    firstName: customer.first_name,
+    lastName: customer.last_name
+  });
 });
 
 // ---------- API Register (Customer) ----------
