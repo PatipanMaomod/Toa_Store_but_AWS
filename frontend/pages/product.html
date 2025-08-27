@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Detail - Teburu</title>
   <link rel="stylesheet" href="/static/css/Pages/product.css">
-
 </head>
 
 <body>
@@ -26,6 +25,13 @@
       <div class="checkout-title">Product Details</div>
     </div>
   </header>
+
+  <!-- Cart Panel -->
+  <div class="cart-panel" id="cart-panel">
+    <h2>🛒 Your Cart</h2>
+    <div id="cart-items"></div>
+    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+  </div>
 
   <div class="checkout-container">
     <!-- Left Side -->
@@ -54,6 +60,6 @@
   </div>
 
   <script src="/static/js/Pages/product.js"></script>
-  </script>
 </body>
+
 </html>
