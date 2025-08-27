@@ -15,14 +15,12 @@
         <nav class="nav">
             <ul>
                 <li><a href="products" class="link">Products</a></li>
-                <li><a href="Community" class="link">Community</a></li>
                 <li><a href="Support" class="link">Support</a></li>
             </ul>
         </nav>
         <div class="auth-buttons">
             <button class="btn" onclick="openModal('signinModal')">SIGN IN</button>
             <button class="btn" onclick="openModal('registerModal')">JOIN US</button>
-            <button class="btn" onclick="openModal('Sign In Admin')">Admin</button>
         </div>
         <div class="profile" id="profile" style="display: none;">
             <img src="\static\images\user.png" alt="Profile" class="profile-img">
@@ -35,7 +33,6 @@
             <a href="products" class="btn">Shop Now</a>
         </div>
     </section>
-
 
 
     <!-- SIGN IN Modal -->
@@ -87,25 +84,8 @@
         </div>
     </div>
 
-    <!-- Admin Modal -->
-    <div id="SignInAdmin" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('SignInAdmin')">&times;</span>
-            <h3>Sign In Admin</h3>
-            <input type="email" placeholder="Email Address *">
-
-            <div class="password-container">
-            <input type="password" id="adminPassword" placeholder="Password *">
-            <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('adminPassword', this)"></i>
-            </div>
-
-            <label><input type="checkbox"> Keep me logged in</label>
-            <button onclick="handleLogin()">SUBMIT</button>
-        </div>
-    </div>
-
+    <!-- Product list -->
     <div class="product-section">
-        <!-- Product list -->
         <div class="products-container" id="product-list-home"></div>
     </div>
 
