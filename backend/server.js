@@ -14,7 +14,7 @@ const app = express();
 
 // ---------- Middleware ----------
 app.use(cors());
-app.use(express.json());            
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ---------- S3 Client ----------
@@ -37,6 +37,11 @@ app.get('/product/:id', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'product.html'));
 });
 
+app.get('/admin/product/:id/edit', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'edit_pro.html'));
+});
+
+
 app.get('/checkout', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'checkout.html'));
 });
@@ -46,7 +51,7 @@ app.get('/upload', (req, res) => {
 });
 
 app.get('/admin/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages','management', 'admin_login.html'));
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_login.html'));
 });
 
 app.get('/login', (req, res) => {
@@ -54,23 +59,14 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/admin/register', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages','management', 'admin_register.html'));
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_register.html'));
 });
-
-
 
 
 app.get('/admin/management', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages','management', 'management.html'));
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'management.html'));
 });
 
-//customers
-app.get('/customers/register', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'customer', 'home.html'));
-});
-app.get('/customers/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'home.html'));
-});
 
 
 
@@ -111,6 +107,26 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
+// ---------- API Create Product ----------
+app.post('/api/products', async (req, res) => {
+  try {
+    const { name, description, price, stock } = req.body;
+
+    const [result] = await pool.query(
+      `INSERT INTO products (name, description, price, stock)
+       VALUES (?, ?, ?, ?)`,
+      [name, description, price, stock]
+    );
+
+    res.json({
+      message: 'Product created successfully',
+      id: result.insertId   //ส่ง id กลับไป
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database insert failed' });
+  }
+});
 
 // ---------- API Products:id----------
 app.get('/api/products/:id', async (req, res) => {
@@ -148,6 +164,57 @@ app.get('/api/products/:id', async (req, res) => {
 });
 
 
+// ---------- API Update Product ----------
+app.put('/api/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, price, stock } = req.body;
+
+    const [result] = await pool.query(
+      `UPDATE products 
+       SET name = ?, description = ?, price = ?, stock = ?
+       WHERE id = ?`,
+      [name, description, price, stock, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.json({ message: 'Product updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update failed' });
+  }
+});
+
+
+
+
+// ---------- API Upload Product Images ----------
+app.put('/api/products/img/upload/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { image_url_main } = req.body; // รับ array ของ URL
+
+    const insertPromises = image_url_main.map(url =>
+      pool.query(
+        `INSERT INTO product_image (product_id, image_url_main) VALUES (?, ?)`,
+        [id, url]
+      )
+    );
+
+    await Promise.all(insertPromises);
+
+    res.json({ message: 'Product images updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update failed' });
+  }
+});
+
+
+
 
 
 
@@ -177,6 +244,29 @@ app.post('/api/upload-to-s3', upload.single('file'), async (req, res) => {
   }
 });
 
+// ---------- API Delete Product Image ----------
+app.delete('/api/products/img/delete/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { urls } = req.body; // array ของ url
+
+    if (!Array.isArray(urls)) {
+      return res.status(400).json({ error: "urls ต้องเป็น array" });
+    }
+
+    for (const url of urls) {
+      await pool.query(
+        `DELETE FROM product_image WHERE product_id = ? AND image_url_main = ?`,
+        [id, url]
+      );
+    }
+
+    res.json({ message: "Images deleted successfully", deleted: urls });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Delete failed" });
+  }
+});
 
 // ---------- API Upload Multiple Images to S3 ----------
 const uploadMany = multer({ storage: multer.memoryStorage() });
