@@ -141,8 +141,12 @@ header {
 
 
 .search-bar {
-    margin: 20px auto;
-    text-align: center;
+  flex: 1; /* กินพื้นที่ฝั่งซ้าย */
+}
+
+
+.actions {
+  flex-shrink: 0; /* ปุ่มไม่หด */
 }
 
 .search-bar input {
@@ -366,8 +370,10 @@ footer {
     color: #fff;
     box-shadow: 0 10px 30px rgba(255, 211, 105, 0.3);
     animation: slideDown 0.5s ease;
+    box-sizing: border-box;
+    max-height: 80vh;
+    overflow-y: auto; 
 }
-
 .modal-content h3 {
     margin: 20px 0 10px;
     color: #ffd369;
@@ -376,13 +382,6 @@ footer {
     transition: all 0.3s ease;
 }
 
-.modal-content h3 {
-    margin: 20px 0 10px;
-    color: #ffd369;
-    font-size: 1.4rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
 
 .modal-content:hover h3 {
     background: linear-gradient(45deg, #ffd369, #ff6b6b);
@@ -390,6 +389,7 @@ footer {
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
+
 
 
 @keyframes slideDown {
@@ -404,6 +404,33 @@ footer {
     }
 }
 
+/* ปรับแต่ง scrollbar สำหรับ Webkit (Chrome, Safari, Edge) */
+.modal-content::-webkit-scrollbar {
+    width: 10px; 
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 211, 105, 0.1); 
+    border-radius: 5px;
+    background: transparent; 
+
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #ffd369; 
+    border-radius: 5px;
+    border: 2px solid rgba(18, 19, 24, 0.95); 
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #ff6b6b;
+}
+
+
+.modal-content {
+    scrollbar-width: thin;
+    scrollbar-color: #ffd369 rgba(255, 211, 105, 0.1);
+}
 .close {
     position: absolute;
     top: 10px;
@@ -426,4 +453,190 @@ footer {
 .close:hover {
     background: #ff6b6b;
     color: #fff;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    color: #ffd369;
+    max-height: 80vh;
+}
+
+.modal-content label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: 500;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgba(255, 211, 105, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+    border-color: #ffd369;
+
+    outline: none;
+}
+
+.modal-content textarea {
+    resize: vertical;
+}
+
+.modal-content .category {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    max-height: 80vh;
+}
+
+.upload-area {
+  border: 2px dashed rgba(255, 211, 105, 0.3);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  margin: 15px 0;
+  cursor: pointer;
+}
+
+.custom-upload {
+  cursor: pointer;
+}
+
+.upload-btn {
+  color: #ffd369;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.images img {
+    max-width: 100px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 211, 105, 0.2);
+}
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.save-btn {
+    background: linear-gradient(45deg, #ffd369, #ff6b6b);
+    color: #000;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.save-btn:hover {
+    box-shadow: 0 5px 15px rgba(255, 211, 105, 0.4);
+}
+
+.add-btn {
+    background: linear-gradient(45deg, #ffd369, #ff6b6b);
+    color: #000;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.add-btn:hover {
+    box-shadow: 0 5px 15px rgba(255, 211, 105, 0.4);
+}
+
+/* Toast Style */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* จัดกลาง */
+  background: linear-gradient(45deg, #4ecdc4, #44a08d);
+  color: #fff;
+  padding: 20px 40px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 18px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: all 0.4s ease;
+  z-index: 3000;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+.inline-block {
+  position: relative;
+  display: inline-block;
+  margin: 2px; /* ระยะห่างระหว่างภาพ */
+}
+
+.inline-block img {
+  display: block;
+  width: 100px; /* กำหนดขนาดภาพให้ชัดเจน */
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 211, 105, 0.2);
+}
+
+.inline-block button {
+  position: absolute;
+  top: 5px; /* ปรับระยะจากขอบบน */
+  right: 5px; /* ปรับระยะจากขอบขวา */
+  width: 20px; /* ขยายขนาดปุ่ม */
+  height: 20px; /* ขยายขนาดปุ่ม */
+  background-color: rgba(255, 107, 107, 0.8); /* สีแดงโปร่งใส */
+  color: #fff;
+  border: none;
+  border-radius: 50%; /* ทำให้เป็นวงกลม */
+  font-size: 12px; /* ขนาดตัวอักษร */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10; /* อยู่ด้านบนภาพ */
+  transition: background-color 0.3s ease;
+}
+
+.inline-block button:hover {
+  background-color: rgba(255, 107, 107, 1); /* สีเข้มขึ้นเมื่อ hover */
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    margin-top: 20px;
 }
