@@ -12,6 +12,19 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 
+app.use(session({
+  key: 'sessionId',
+  secret: process.env.SESSION_SECRET || 'supersecret',
+  store: store,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: false, // true ถ้าใช้ https
+    maxAge: 1000 * 60 * 60 // 1 ชั่วโมง
+  }
+}));
+
 // ---------- Middleware ----------
 app.use(cors());
 app.use(express.json());
@@ -26,6 +39,10 @@ app.use(express.static(path.join(__dirname, '..', 'frontend')));
 // ---------- Pages ----------
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'home.html'));
+});
+
+app.get('/header', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages','management', 'header.html'));
 });
 
 // product list
@@ -57,6 +74,26 @@ app.get('/admin/login', (req, res) => {
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'login.html'));
 });
+
+app.get('/api/customers/me', (req, res) => {
+  if (!req.session.customerId) {
+    return res.status(401).json({ error: 'Not logged in' });
+  }
+  res.json({
+    customerId: req.session.customerId,
+    email: req.session.email
+  });
+});
+
+app.post('/api/customers/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) return res.status(500).json({ error: 'Logout failed' });
+    res.clearCookie('sessionId');
+    res.json({ message: 'Logout success' });
+  });
+});
+
+
 
 app.get('/admin/register', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_register.html'));
@@ -366,6 +403,79 @@ app.post('/api/admin/register', async (req, res) => {
     res.json({ message: 'Admin register successful' });
   } catch (err) {
     console.error("Admin Register error:", err);
+    if (err.code === 'ER_DUP_ENTRY') {
+      res.status(400).json({ error: 'Username นี้มีผู้ใช้แล้ว' });
+    } else {
+      res.status(500).json({ error: 'Database query failed' });
+    }
+  }
+});
+
+
+// ---------- API Login (Customer) ----------
+app.post('/api/customers/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: 'กรุณากรอก username และ password' });
+    }
+
+    const [rows] = await pool.query(
+      `SELECT id, first_name, last_name, email, password 
+       FROM customers 
+       WHERE email = ?`, [username]
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({ error: 'ไม่พบลูกค้า' });
+    }
+
+    const customer = rows[0];
+    const isMatch = await bcrypt.compare(password, customer.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ error: 'รหัสผ่านไม่ถูกต้อง' });
+    }
+
+    // ✅ เก็บ session
+    req.session.customerId = customer.id;
+    req.session.email = customer.email;
+
+    res.json({
+      message: 'เข้าสู่ระบบสำเร็จ',
+      customerId: customer.id,
+      email: customer.email,
+      firstName: customer.first_name,
+      lastName: customer.last_name
+    });
+
+  } catch (err) {
+    console.error("Customer Login error:", err);
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+// ---------- API Register (Customer) ----------
+app.post('/api/customers/register', async (req, res) => {
+  try {
+    const { f_name, l_name, username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: 'กรุณากรอก username และ password' });
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+
+    await pool.query(
+      `INSERT INTO customers (first_name, last_name, email, password) 
+       VALUES (?, ?, ?, ?)`,
+      [f_name, l_name, username, hash]
+    );
+
+    res.json({ message: 'Customer register successful' });
+  } catch (err) {
+    console.error("Customer Register error:", err);
     if (err.code === 'ER_DUP_ENTRY') {
       res.status(400).json({ error: 'Username นี้มีผู้ใช้แล้ว' });
     } else {
