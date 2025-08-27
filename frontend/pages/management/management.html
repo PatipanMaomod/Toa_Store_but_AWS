@@ -28,10 +28,18 @@
         </nav>
     </header>
 
-    <!-- Search -->
-    <div class="search-bar">
-        <input type="text" placeholder="ค้นหาสินค้า...">
+    <div class="toolbar">
+        <!-- Search -->
+        <div class="search-bar">
+            <input type="text" placeholder="ค้นหาสินค้า...">
+        </div>
+
+        <!-- ปุ่มเพิ่มสินค้าใหม่ -->
+        <div class="actions">
+            <button class="add-btn" onclick="openAddModal()">➕ เพิ่มสินค้าใหม่</button>
+        </div>
     </div>
+
 
     <!-- Main Content -->
     <main class="main">
@@ -40,56 +48,103 @@
         <!-- Modal -->
         <div id="editProductForm" class="modal">
             <div class="modal-content">
-                <button onclick="closeModal()" class="close">✖</button>
-                </button>
-                <h3 class="font-semibold mt-2">แก้ไขสินค้า</h2>
-                    <p>ข้อความหรือฟอร์มต่างๆ ใส่ตรงนี้ได้เลย</p>
+                <span onclick="closeModal()" class="close">✖</span>
+
+                <h2>แก้ไขข้อมูลสินค้า</h2>
+
+                <form id="productForm">
+                    <label>ชื่อสินค้า *</label>
+                    <input type="text" id="editName" placeholder="ชื่อสินค้า...">
+
+                    <label>รายละเอียดสินค้า</label>
+                    <textarea id="editDesc" rows="3" placeholder="รายละเอียดสินค้า..."></textarea>
+
+                    <div class="category">
+                        <div>
+                            <label>Price</label>
+                            <input type="text" id="editPrice" placeholder="Price...">
+                        </div>
+                        <div>
+                            <label>จำนวนสต็อก *</label>
+                            <input type="number" id="editQty" placeholder="0">
+                        </div>
+
+                    </div>
+
+                    <div class="upload-area">
+                        <label for="editImages" class="custom-upload">
+                            ลากและวางไฟล์ที่นี่ หรือ <span class="upload-btn">เลือกไฟล์</span>
+                        </label>
+                        <input type="file" id="editImages" multiple hidden>
+                        <p>รองรับไฟล์ JPG, PNG, GIF</p>
+
+                    </div>
+
+                    <div class="images" id="editPreview">
+                        <!-- Preview รูปจะถูกใส่ที่นี่ -->
+                    </div>
+                    <div class="buttons">
+                        <button type="button" class="cancel-btn" onclick="closeModal()">ยกเลิก</button>
+                        <button type="submit" class="save-btn">บันทึกข้อมูล</button>
+                    </div>
+
+
+                </form>
             </div>
+
         </div>
 
+        <!-- Modal Add Product -->
+        <div id="addProductForm" class="modal">
+            <div class="modal-content">
+                <span onclick="closeAddModal()" class="close">✖</span>
 
+                <h2>เพิ่มสินค้าใหม่</h2>
 
-        <!-- <div id="editProductForm" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="modal-content">
-            <button onclick="closeModal()"
-                class="absolute top-2 right-2 text-gray-600 hover:text-red-500 font-bold text-2xl">
-                ✖
-            </button>
+                <form id="newProductForm">
+                    <label>ชื่อสินค้า *</label>
+                    <input type="text" id="newName" placeholder="ชื่อสินค้า..." required>
 
-            <h2>แก้ไขสินค้า</h2>
-            <label>ชื่อสินค้า *</label>
-            <input type="text" value="iPhone 15 Pro" style="border: 1px solid #00ff00;">
-            <label>รายละเอียดสินค้า</label>
-            <input type="text" value="หน้าจอจาก Apple ใช้ชิป A17 Pro มาพร้อมกล้องที่ทรงพลัง">
-            <div class="category">
-                <label>หมวดหมู่</label>
-                <input type="text" value="Electronics">
-                <label>จำนวน</label>
-                <input type="text" value="25">
+                    <label>รายละเอียดสินค้า</label>
+                    <textarea id="newDesc" rows="3" placeholder="รายละเอียดสินค้า..."></textarea>
+
+                    <div class="category">
+                        <div>
+                            <label>Price</label>
+                            <input type="text" id="newPrice" placeholder="Price..." required>
+                        </div>
+                        <div>
+                            <label>จำนวนสต็อก *</label>
+                            <input type="number" id="newQty" placeholder="0" required>
+                        </div>
+                    </div>
+
+                    <div class="upload-area">
+                        <label for="newImages" class="custom-upload">
+                            ลากและวางไฟล์ที่นี่ หรือ <span class="upload-btn">เลือกไฟล์</span>
+                        </label>
+                        <input type="file" id="newImages" multiple hidden>
+                        <p>รองรับไฟล์ JPG, PNG, GIF</p>
+                    </div>
+
+                    <div class="images" id="newPreview">
+                        <!-- Preview รูปใหม่ -->
+                    </div>
+
+                    <div class="buttons">
+                        <button type="button" class="cancel-btn" onclick="closeAddModal()">ยกเลิก</button>
+                        <button type="submit" class="save-btn">บันทึกสินค้าใหม่</button>
+                    </div>
+                </form>
             </div>
-            <div class="upload-area">
-                <span>ลากและวางไฟล์ที่นี่ หรือ</span>
-                <input type="file" multiple style="display: none;">
-                <span>อัปโหลดไฟล์</span>
-                <p>รองรับไฟล์ JPG, PNG, GIF</p>
-            </div>
-            <div class="images">
-                <img src="https://via.placeholder.com/100?text=iPhone" alt="Image 1">
-                <img src="https://via.placeholder.com/100?text=Samsung" alt="Image 2">
-            </div>
-            <div class="buttons">
-                <button class="cancel-btn" onclick="closeModal()">ยกเลิก</button>
-                <button class="save-btn">บันทึก</button>
-            </div>
-        </div>
-
-         </div> -->
-
-
-
         </div>
 
     </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <p id="toastMessage">ข้อความ</p>
+    </div>
 
 
     <!-- Footer -->
