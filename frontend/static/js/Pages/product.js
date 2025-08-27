@@ -3,6 +3,7 @@ const productId = pathParts[pathParts.length - 1];
 
 let currentProduct = null;
 let images = [];
+let cart = JSON.parse(localStorage.getItem('cart')) || []; // ใช้ localStorage เก็บตะกร้า
 
 async function loadProduct() {
     try {
@@ -16,12 +17,10 @@ async function loadProduct() {
             : ["/static/img/no-image.png"];
 
         const container = document.getElementById('product-detail');
-        // ล้างเนื้อหาเดิม
         while (container.firstChild) {
             container.removeChild(container.firstChild);
         }
 
-        // สร้างและเพิ่ม element
         const title = document.createElement('h2');
         title.textContent = p.name;
         container.appendChild(title);
@@ -54,6 +53,7 @@ async function loadProduct() {
         document.getElementById('price').textContent = `฿${p.price}`;
         document.getElementById('stock').textContent = p.stock;
         updateTotal();
+        updateCartPanel(); // อัปเดตตะกร้าเมื่อโหลดสินค้า
     } catch (err) {
         const container = document.getElementById('product-detail');
         while (container.firstChild) {
@@ -70,6 +70,73 @@ function updateTotal() {
     const qty = parseInt(document.getElementById('quantity').value) || 1;
     const total = currentProduct.price * qty;
     document.getElementById('total').textContent = `฿${total}`;
+}
+
+function addToCart() {
+    const qty = parseInt(document.getElementById('quantity').value) || 1;
+    const item = {
+        id: currentProduct.id,
+        name: currentProduct.name,
+        price: currentProduct.price,
+        quantity: qty,
+        image: images[0]
+    };
+
+    // ตรวจสอบว่าสินค้ามีในตะกร้าแล้วหรือไม่
+    const existingItemIndex = cart.findIndex(item => item.id === currentProduct.id);
+    if (existingItemIndex > -1) {
+        cart[existingItemIndex].quantity += qty;
+    } else {
+        cart.push(item);
+    }
+
+    // บันทึกตะกร้าใน localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartPanel();
+    alert('เพิ่มสินค้าในตะกร้าสำเร็จ!');
+}
+
+function checkout() {
+    // นำทางไปหน้า checkout
+    window.location.href = '/checkout';
+}
+
+function updateCartPanel() {
+    const cartItems = document.getElementById('cart-items');
+    while (cartItems.firstChild) {
+        cartItems.removeChild(cartItems.firstChild);
+    }
+
+    cart.forEach(item => {
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+            <span>${item.name} (x${item.quantity})</span>
+            <span>฿${item.price * item.quantity}</span>
+            <button onclick="removeFromCart(${item.id})">✖</button>
+        `;
+        cartItems.appendChild(cartItem);
+    });
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartPanel();
+}
+
+// ฟังก์ชันสำหรับ lightbox (สมมติว่ามี)
+function openLightbox(src) {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightboxImage');
+    lightboxImage.src = src;
+    lightbox.style.display = 'flex';
+}
+
+function closeLightbox(event) {
+    if (event.target.id === 'lightbox' || event.target.tagName === 'SPAN') {
+        document.getElementById('lightbox').style.display = 'none';
+    }
 }
 
 loadProduct();
