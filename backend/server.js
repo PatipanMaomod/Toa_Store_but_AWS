@@ -42,8 +42,6 @@ app.get('/admin/product/:id/edit', (req, res) => {
 });
 
 
-
-
 app.get('/checkout', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'checkout.html'));
 });
@@ -68,7 +66,6 @@ app.get('/admin/register', (req, res) => {
 app.get('/admin/management', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'management.html'));
 });
-
 
 
 

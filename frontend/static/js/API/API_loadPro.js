@@ -28,11 +28,14 @@ async function loadPro_pro() {
       price.textContent = `ราคา: ${p.price} บาท`;
       card.appendChild(price);
 
+      const btnGroup = document.createElement('div');
+      btnGroup.className = "btn-group";
+
+
+      // ปุ่ม Add to Cart
       const btn = document.createElement('button');
       btn.textContent = "Add to Cart";
       btn.onclick = () => addToCart(p);
-      card.appendChild(btn);
-
 
       // ปุ่ม View Details
       const viewBtn = document.createElement('button');
@@ -40,7 +43,10 @@ async function loadPro_pro() {
       viewBtn.onclick = () => {
         window.location.href = `/product/${p.id}`;
       };
-      card.appendChild(viewBtn);
+
+      btnGroup.appendChild(btn);
+      btnGroup.appendChild(viewBtn);
+      card.appendChild(btnGroup)
 
 
       container.appendChild(card);
@@ -49,6 +55,8 @@ async function loadPro_pro() {
     console.error("โหลดสินค้าล้มเหลว:", err);
   }
 }
+
+
 
 // ================= Loader แบบ Home =================
 async function loadPor_home() {
