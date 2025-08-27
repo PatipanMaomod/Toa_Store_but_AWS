@@ -221,6 +221,8 @@ function renderAuthButtons() {
            onclick="toggleProfileMenu()">
 
       <div class="dropdown-menu" id="profileDropdown">
+        <span>${customer.firstName || "User"}</span>
+        <hr>
         <button onclick="openCart()">🛒 Cart</button>
         <button onclick="handleLogout()">🚪 Logout</button>
       </div>
