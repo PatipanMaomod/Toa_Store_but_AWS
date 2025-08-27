@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/header', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages','management', 'header.html'));
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'header.html'));
 });
 
 // product list
