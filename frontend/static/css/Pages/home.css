@@ -6,6 +6,7 @@
     --mint: #25ffbe;
 }
 
+
 * {
     margin: 0;
     padding: 0;
@@ -426,11 +427,10 @@ footer {
 .footer-left {
     flex: 1;
     min-width: 250px;
-    text-align: left; 
 }
 
 .footer-logo {
-    width: 150px; 
+    width: 150px; /* ปรับขนาดโลโก้ */
     margin-bottom: 15px;
 }
 
@@ -440,7 +440,7 @@ footer {
 }
 
 .footer-right {
-    flex: 1;
+    flex: 2;
     min-width: 300px;
 }
 

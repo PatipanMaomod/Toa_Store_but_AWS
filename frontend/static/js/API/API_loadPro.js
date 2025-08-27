@@ -106,6 +106,11 @@ async function loadPor_home() {
       title.textContent = p.name;
       card.appendChild(title);
 
+    //ทำให้คลิกทั้งการ์ดไปยัง /product/:id
+      card.addEventListener('click', () => {
+        window.location.href = `/product/${p.id}`;
+      });
+      card.style.cursor = "pointer"; // เปลี่ยนเคอร์เซอร์เมื่อโฮเวอร์
 
       container.appendChild(card);
     });
