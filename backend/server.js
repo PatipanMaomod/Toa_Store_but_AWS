@@ -75,6 +75,15 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'login.html'));
 });
 
+app.get('/admin/register', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_register.html'));
+});
+
+
+app.get('/admin/management', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'management.html'));
+});
+
 app.get('/api/customers/me', (req, res) => {
   if (!req.session.customerId) {
     return res.status(401).json({ error: 'Not logged in' });
@@ -92,18 +101,6 @@ app.post('/api/customers/logout', (req, res) => {
     res.json({ message: 'Logout success' });
   });
 });
-
-
-
-app.get('/admin/register', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_register.html'));
-});
-
-
-app.get('/admin/management', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'management.html'));
-});
-
 
 
 
@@ -411,7 +408,6 @@ app.post('/api/admin/register', async (req, res) => {
   }
 });
 
-
 // ---------- API Login (Customer) ----------
 app.post('/api/customers/login', async (req, res) => {
   try {
@@ -438,7 +434,7 @@ app.post('/api/customers/login', async (req, res) => {
       return res.status(401).json({ error: 'รหัสผ่านไม่ถูกต้อง' });
     }
 
-    // ✅ เก็บ session
+    //  เก็บ session
     req.session.customerId = customer.id;
     req.session.email = customer.email;
 
@@ -483,7 +479,6 @@ app.post('/api/customers/register', async (req, res) => {
     }
   }
 });
-
 
 
 // ---------- Error Handlers ----------
