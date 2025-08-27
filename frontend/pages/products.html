@@ -22,20 +22,21 @@
       <ul>
         <li><a href="/" class="link">Home</a></li>
         <li><a href="products" class="link">Products</a></li>
-        <li><a href="#" class="link">Community</a></li>
         <li><a href="#" class="link">Support</a></li>
       </ul>
     </nav>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="ค้นหาสินค้า..." onkeyup="filterProducts()">
+    </div>
+
     <div class="cart" onclick="toggleCart()">
       🛒 Cart <span class="cart-count" id="cart-count">0</span>
     </div>
   </header>
 
-  <h1>Our Products</h1>
-
-
   <!-- Product list -->
-  <div class="products-container" id="product-list-pro"></div>
+  <div class="products-container" id="product-filter"></div>
 
   <!-- Cart Panel -->
   <div class="cart-panel" id="cart-panel">
@@ -43,8 +44,6 @@
     <div id="cart-items"></div>
     <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
   </div>
-
-
 
 
   <div style="text-align:center;">
@@ -64,6 +63,8 @@
 
   <script src="static/js/Pages/products.js"></script>
   <script src="static/js/API/API_loadPro.js"></script>
+  <script src="static/js/API/search.js"></script>
+
 </body>
 
 </html>

@@ -14,14 +14,17 @@
         <nav class="nav">
             <ul>
                 <li><a href="products" class="link">Products</a></li>
-                <li><a href="Community" class="link">Community</a></li>
                 <li><a href="Support" class="link">Support</a></li>
             </ul>
         </nav>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="ค้นหาสินค้า..." onkeyup="filterProducts()">
+        </div>
+
         <div class="auth-buttons">
             <button class="btn" onclick="openModal('signinModal')">SIGN IN</button>
             <button class="btn" onclick="openModal('registerModal')">JOIN US</button>
-            <button class="btn" onclick="openModal('Sign In Admin')">Admin</button>
         </div>
         <div class="profile" id="profile" style="display: none;">
             <img src="\static\images\user.png" alt="Profile" class="profile-img">
@@ -130,6 +133,8 @@
 
     <script src="\static\js\Pages\home.js"></script>
     <script src="\static\js\API\API_loadPro.js"></script>
+    <script src="\static\js\API\search.js"></script>
+
 </body>
 
 </html>

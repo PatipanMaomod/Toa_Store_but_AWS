@@ -36,6 +36,11 @@ header {
     color: var(--primary);
 }
 
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
 
 .nav ul {
     list-style: none;
@@ -535,4 +540,20 @@ footer {
     opacity: 0.9;
     line-height: 1.6;
 }
-/* เหตุผลการขาย */
+.search-bar {
+    flex: 0 0 auto;   /* ไม่ขยายเต็มพื้นที่ */
+    margin-left: 20px; /* ช่องว่างระหว่างเมนูกับ search-bar */
+}
+
+.search-bar input {
+    width: 250px; /* ปรับความยาว input */
+    max-width: 100%; /* กรณีหน้าจอเล็ก */
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transition: all 0.3s ease;
+}
