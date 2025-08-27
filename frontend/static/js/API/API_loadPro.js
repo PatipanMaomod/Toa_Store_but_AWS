@@ -67,7 +67,10 @@ async function loadPor_home() {
     const container = document.getElementById('product-list-home');
     container.innerHTML = '';
 
-    products.forEach(p => {
+    // 👉 เอาแค่ 3 ตัวแรก
+    const top3 = products.slice(0, 3);
+
+    top3.forEach(p => {
       const card = document.createElement('div');
       card.className = "card";
 
@@ -75,12 +78,11 @@ async function loadPor_home() {
       img.src = p.image_main[0] || "https://product-images-toa-shop.s3.ap-northeast-3.amazonaws.com/pro_images_S3/broken-image-example.png";
       card.appendChild(img);
 
-
       const title = document.createElement('h3');
       title.textContent = p.name;
       card.appendChild(title);
 
-      //ทำให้คลิกทั้งการ์ดไปยัง /product/:id
+      // คลิกทั้งการ์ดไปยัง /product/:id
       card.addEventListener('click', () => {
         window.location.href = `/product/${p.id}`;
       });
