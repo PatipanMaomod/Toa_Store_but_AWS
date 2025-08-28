@@ -1,4 +1,4 @@
-let cart = [];
+let cartItems = [];
 
 // Generate background particles
 function createParticles() {
@@ -14,49 +14,40 @@ function createParticles() {
     }
 }
 
-// Get cart data from URL parameters or sessionStorage
-function getCartData() {
-    // Try to get from URL first (when redirected from products page)
-    const urlParams = new URLSearchParams(window.location.search);
-    const cartParam = urlParams.get('cart');
-
-    if (cartParam) {
-        try {
-            const cartData = JSON.parse(decodeURIComponent(cartParam));
-            // Convert simple array to object format with quantities
-            const cartMap = {};
-            cartData.forEach(item => {
-                if (cartMap[item]) {
-                    cartMap[item].quantity++;
-                } else {
-                    cartMap[item] = { name: item, quantity: 1 };
-                }
-            });
-            return Object.values(cartMap);
-        } catch (e) {
-            console.error('Error parsing cart data:', e);
-        }
-    }
-
-    // Fallback to localStorage or return empty cart
+// Load cart items from API
+async function loadCartItems() {
     try {
-        const storedCart = localStorage.getItem('cart');
-        return storedCart ? JSON.parse(storedCart) : [];
-    } catch (e) {
-        return [];
+        const res = await fetch("/api/cart", { credentials: "include" });
+        if (!res.ok) {
+            const data = await res.json();
+            showToast(data.error || "⚠ Please login to view checkout");
+            window.location.href = "/login";
+            return;
+        }
+
+        cartItems = await res.json();
+        renderCart();
+        updateSummary();
+    } catch (err) {
+        console.error("Load cart error:", err);
+        showToast("⚠ Failed to load cart items");
+        cartItems = [];
+        renderCart();
     }
 }
 
+// Render cart items
 function renderCart() {
     const container = document.getElementById('cart-items-container');
     const cartCount = document.getElementById('cart-count');
 
-    if (cart.length === 0) {
+    if (cartItems.length === 0) {
         container.innerHTML = `
           <div class="empty-cart">
             <div class="empty-cart-icon">🛒</div>
             <h3>Your cart is empty</h3>
             <p>Add some amazing products to get started!</p>
+            <a href="/" class="back-to-shop">← Back to Shop</a>
           </div>
         `;
         cartCount.textContent = '0';
@@ -64,150 +55,404 @@ function renderCart() {
         return;
     }
 
-    let totalItems = 0;
-    container.innerHTML = cart.map((item, index) => {
-        const product = productData[item.name] || { icon: '📦', price: 99.99 };
-        totalItems += item.quantity;
+    let totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    container.innerHTML = cartItems.map((item, index) => {
+        const imageUrl = item.image_main && item.image_main.length > 0
+            ? item.image_main[0]
+            : 'https://via.placeholder.com/80x80?text=No+Image';
 
         return `
-          <div class="cart-item">
+          <div class="cart-item" data-cart-id="${item.cart_id}">
             <div class="item-image">
-              ${product.icon}
+              <img src="${imageUrl}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80x80?text=Error'">
             </div>
             <div class="item-details">
               <div class="item-name">${item.name}</div>
-              <div class="item-price">$${product.price.toFixed(2)} each</div>
+              <div class="item-price">${item.price} THB each</div>
+              <div class="item-stock">Stock: ${item.stock}</div>
             </div>
             <div class="quantity-controls">
-              <button class="quantity-btn" onclick="changeQuantity(${index}, -1)">-</button>
+              <button class="quantity-btn" onclick="updateQuantity(${item.cart_id}, ${item.quantity - 1}, ${item.stock})">-</button>
               <span class="quantity-display">${item.quantity}</span>
-              <button class="quantity-btn" onclick="changeQuantity(${index}, 1)">+</button>
+              <button class="quantity-btn" onclick="updateQuantity(${item.cart_id}, ${item.quantity + 1}, ${item.stock})">+</button>
             </div>
-            <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+            <div class="item-total">
+              ${(item.price * item.quantity).toFixed(2)} THB
+            </div>
+            <button class="remove-btn" onclick="removeItem(${item.cart_id})">Remove</button>
           </div>
         `;
     }).join('');
 
     cartCount.textContent = totalItems;
-    updateSummary();
 }
 
-function changeQuantity(index, delta) {
-    cart[index].quantity += delta;
-    if (cart[index].quantity <= 0) {
-        cart.splice(index, 1);
-    }
-    saveCart();
-    renderCart();
-}
-
-function removeItem(index) {
-    cart.splice(index, 1);
-    saveCart();
-    renderCart();
-}
-
-function updateSummary() {
-    let subtotal = 0;
-
-    cart.forEach(item => {
-        const product = productData[item.name] || { price: 99.99 };
-        subtotal += product.price * item.quantity;
-    });
-
-    const discount = subtotal > 200 ? subtotal * 0.1 : 0; // 10% discount if over $200
-    const tax = (subtotal - discount) * 0.08; // 8% tax
-    const shipping = subtotal > 79 ? 0 : 9.99; // Free shipping over $79
-    const total = subtotal - discount + tax + shipping;
-
-    document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-    document.getElementById('discount').textContent = `-$${discount.toFixed(2)}`;
-    document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
-    document.getElementById('shipping').textContent = shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`;
-    document.getElementById('total').textContent = `$${total.toFixed(2)}`;
-}
-
-function saveCart() {
-    localStorage.setItem('cart', JSON.stringify(cart));
-}
-
-function submitForm(event) {
-    event.preventDefault();
-
-    if (cart.length === 0) {
-        alert("Your cart is empty! Please add some products first.");
+// Update item quantity
+async function updateQuantity(cartId, newQuantity, maxStock) {
+    if (newQuantity < 1) {
+        removeItem(cartId);
         return;
     }
 
-    // Add loading state
-    const form = event.target;
-    const submitBtn = form.querySelector('.checkout-btn');
-    const originalText = submitBtn.textContent;
-
-    submitBtn.textContent = 'Processing...';
-    submitBtn.classList.add('loading');
-
-    // Simulate processing
-    setTimeout(() => {
-        const formData = new FormData(form);
-        const customerInfo = {
-            name: formData.get('fullName'),
-            email: formData.get('email'),
-            address: formData.get('address')
-        };
-
-        alert(`🎉 Order placed successfully!\n\nThank you, ${customerInfo.name}!\nConfirmation sent to: ${customerInfo.email}\n\nYour gaming gear will be shipped to:\n${customerInfo.address}`);
-
-        // Clear cart and redirect
-        localStorage.removeItem('cart');
-        window.location.href = 'index.html';
-    }, 2000);
-}
-
-// Initialize page
-document.addEventListener('DOMContentLoaded', function () {
-    createParticles();
-    cart = getCartData();
-    renderCart();
-
-    // Add form submit handler
-    document.getElementById('checkout-form').addEventListener('submit', submitForm);
-});
-
-document.addEventListener("DOMContentLoaded", async () => {
-    const cartItemsContainer = document.getElementById("checkoutItems");
-    const checkoutTotal = document.getElementById("checkoutTotal");
+    if (newQuantity > maxStock) {
+        showToast(`⚠ Maximum stock available: ${maxStock}`);
+        return;
+    }
 
     try {
-        const res = await fetch("/api/cart", { credentials: "include" });
+        const res = await fetch(`/api/cart/${cartId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ quantity: newQuantity })
+        });
+
+        const data = await res.json();
         if (!res.ok) {
-            const data = await res.json();
-            showToast(data.error || "❌ Please login to view checkout");
-            window.location.href = "/login";
+            showToast(data.error || "⚠ Failed to update quantity");
             return;
         }
 
-        const cartItems = await res.json();
-        cartItemsContainer.innerHTML = "";
-        let total = 0;
+        showToast("✅ Quantity updated");
+        await loadCartItems(); // Reload cart items
+        await updateCartCount(); // Update header cart count
+    } catch (err) {
+        console.error("Update quantity error:", err);
+        showToast("⚠ Failed to update quantity");
+    }
+}
 
-        cartItems.forEach(item => {
-            total += item.price * item.quantity;
-            const itemElement = document.createElement("div");
-            itemElement.className = "cart-item";
-            itemElement.innerHTML = `
-        <img src="${item.image_main[0] || 'https://via.placeholder.com/50'}" alt="${item.name}">
-        <div>
-          <strong>${item.name}</strong><br>
-          <span>${item.price} THB x ${item.quantity}</span>
-        </div>
-      `;
-            cartItemsContainer.appendChild(itemElement);
+// Remove item from cart
+async function removeItem(cartId) {
+    try {
+        const res = await fetch(`/api/cart/${cartId}`, {
+            method: "DELETE",
+            credentials: "include"
         });
 
-        checkoutTotal.textContent = total.toFixed(2);
+        const data = await res.json();
+        if (!res.ok) {
+            showToast(data.error || "⚠ Failed to remove item");
+            return;
+        }
+
+        showToast("✅ Item removed from cart");
+        await loadCartItems(); // Reload cart items
+        await updateCartCount(); // Update header cart count
     } catch (err) {
-        console.error("Checkout error:", err);
-        showToast("❌ Failed to load checkout");
+        console.error("Remove item error:", err);
+        showToast("⚠ Failed to remove item");
+    }
+}
+
+// Update order summary
+function updateSummary() {
+    let subtotal = 0;
+
+    cartItems.forEach(item => {
+        subtotal += item.price * item.quantity;
+    });
+
+    // Calculate discounts and fees
+    const discount = subtotal > 2000 ? subtotal * 0.1 : 0; // 10% discount if over 2000 THB
+    const shipping = subtotal > 1500 ? 0 : 150; // Free shipping over 1500 THB
+    const tax = (subtotal - discount) * 0.07; // 7% VAT
+    const total = subtotal - discount + tax + shipping;
+
+    // Update UI
+    document.getElementById('subtotal').textContent = `${subtotal.toFixed(2)} THB`;
+    document.getElementById('discount').textContent = `-${discount.toFixed(2)} THB`;
+    document.getElementById('tax').textContent = `${tax.toFixed(2)} THB`;
+    document.getElementById('shipping').textContent = shipping === 0 ? 'Free' : `${shipping.toFixed(2)} THB`;
+    document.getElementById('total').textContent = `${total.toFixed(2)} THB`;
+
+    // Update benefits text
+    updateBenefitsText(subtotal);
+}
+
+// Update benefits text based on subtotal
+function updateBenefitsText(subtotal) {
+    const benefitsContainer = document.querySelector('.benefits');
+    if (!benefitsContainer) return;
+
+    const shippingText = subtotal > 1500
+        ? "Free shipping applied!"
+        : `Add ${(1500 - subtotal).toFixed(2)} THB more for free shipping`;
+
+    benefitsContainer.innerHTML = `
+        <div class="benefit-item">
+            <span>🚚</span>
+            <span>${shippingText}</span>
+        </div>
+        <div class="benefit-item">
+            <span>🔒</span>
+            <span>Secure payment processing</span>
+        </div>
+        <div class="benefit-item">
+            <span>↩️</span>
+            <span>30-day return policy</span>
+        </div>
+        ${subtotal > 2000 ? `
+        <div class="benefit-item discount-applied">
+            <span>🎉</span>
+            <span>10% discount applied!</span>
+        </div>
+        ` : ''}
+    `;
+}
+
+// Clear entire cart
+async function clearCart() {
+    if (!confirm("Are you sure you want to clear your entire cart?")) {
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/cart", {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+            showToast(data.error || "⚠ Failed to clear cart");
+            return;
+        }
+
+        showToast("✅ Cart cleared");
+        await loadCartItems(); // Reload cart items
+        await updateCartCount(); // Update header cart count
+    } catch (err) {
+        console.error("Clear cart error:", err);
+        showToast("⚠ Failed to clear cart");
+    }
+}
+
+// Proceed to payment (placeholder)
+let finalTotal = 0;
+
+async function proceedToPayment() {
+    if (cartItems.length === 0) {
+        showToast("⚠ Your cart is empty!");
+        return;
+    }
+
+    let subtotal = 0;
+    cartItems.forEach(item => {
+        subtotal += item.price * item.quantity;
+    });
+
+    const discount = subtotal > 2000 ? subtotal * 0.1 : 0;
+    const shipping = subtotal > 1500 ? 0 : 150;
+    const tax = (subtotal - discount) * 0.07;
+    finalTotal = subtotal - discount + tax + shipping;
+
+    // สร้าง modal ด้วย innerHTML ใช้ class ตาม CSS เดิม
+    const modal = document.createElement("div");
+    modal.id = "checkoutModal";
+    modal.className = "modal"; // ใช้ class .modal ของคุณ
+    modal.style.display = "flex"; // บังคับโชว์ทันที (เพราะ .modal ใน css set display:none)
+
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h3>Confirm Checkout</h2>
+            <h2>Total: ${finalTotal.toFixed(2)} THB</h2>
+            <div class="modal-actions">
+            <button id="confirmBtn"> Confirm</button>
+            <button id="cancelBtn"> Cancel</button>
+            </div>
+        </div>
+        `;
+    document.body.appendChild(modal);
+
+    // ปุ่ม close (กากบาท)
+    document.getElementById("closeModal").addEventListener("click", () => {
+        modal.remove();
+    });
+
+    // ปุ่ม cancel
+    document.getElementById("cancelBtn").addEventListener("click", () => {
+        modal.remove();
+    });
+
+    // ปุ่ม confirm
+    document.getElementById("confirmBtn").addEventListener("click", async () => {
+        try {
+            const res = await fetch("/api/update_stock", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ items: cartItems })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                console.table(cartItems, ["name", "quantity", "price"]);
+                console.log("Final total:", finalTotal);
+                printReceiptSimple(cartItems, finalTotal);
+            
+                clearCartAll(); // เคลียร์ cart ทันที
+                showToast("success", "✅ Checkout successful!");
+                cartItems = [];
+                renderCart();
+
+            } else {
+                showToast("⚠ " + (data.error || "Checkout failed"));
+            }
+        } catch (err) {
+            showToast("⚠ Error: " + err.message);
+        } finally {
+            modal.remove();
+        }
+    });
+}
+
+function printReceiptSimple(items, total) {
+    const now = new Date();
+    const receiptWindow = window.open("", "_blank");
+
+    const buddhistYear = now.getFullYear() + 543;
+    const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${buddhistYear} 
+                           ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+
+    const receiptNo = `RC${now.getFullYear()}-${Math.floor(Math.random() * 10000)
+        .toString().padStart(4, '0')}`;
+
+    // สร้างโครงสร้างหน้า
+    const doc = receiptWindow.document;
+
+    const html = doc.createElement("html");
+    const head = doc.createElement("head");
+    const body = doc.createElement("body");
+
+    // style
+    const style = doc.createElement("style");
+    style.textContent = `
+        body { font-family: Arial, sans-serif; background:#f9f9f9; padding:20px; }
+        .receipt { max-width:420px; margin:auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align:center; margin:0; }
+        .item { display:flex; justify-content:space-between; margin:8px 0; border-bottom:1px dashed #ddd; padding-bottom:5px; }
+        .left { font-size:14px; }
+        .right { font-weight:bold; }
+        .summary { margin-top:15px; font-size:16px; font-weight:bold; text-align:right; color:#28a745; }
+        .footer { margin-top:20px; text-align:center; font-size:14px; color:#555; }
+        .btns { margin-top:20px; text-align:center; }
+        .btns button { padding:8px 16px; margin:5px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+        .print-btn { background:#007bff; color:white; }
+    `;
+    head.appendChild(style);
+
+    // wrapper
+    const wrapper = doc.createElement("div");
+    wrapper.className = "receipt";
+
+    const h2 = doc.createElement("h2");
+    h2.textContent = "🧾 ใบเสร็จรับเงิน";
+    wrapper.appendChild(h2);
+
+    const info = doc.createElement("div");
+    info.className = "footer";
+    info.innerHTML = `
+        เลขที่ใบเสร็จ: ${receiptNo}<br>
+        วันที่/เวลา: ${formattedDate}<br>
+    `;
+    wrapper.appendChild(info);
+
+    // รายการสินค้า
+    items.forEach(item => {
+        const div = doc.createElement("div");
+        div.className = "item";
+
+        const left = doc.createElement("div");
+        left.className = "left";
+        left.innerHTML = `${item.name}<br><small>${item.quantity} x ฿${Number(item.price).toFixed(2)}</small>`;
+
+        const right = doc.createElement("div");
+        right.className = "right";
+        right.textContent = `฿${(Number(item.price) * item.quantity).toFixed(2)}`;
+
+        div.appendChild(left);
+        div.appendChild(right);
+        wrapper.appendChild(div);
+    });
+
+    // รวมทั้งหมด
+    const summary = doc.createElement("div");
+    summary.className = "summary";
+    summary.textContent = `ยอดรวมทั้งสิ้น: ฿${total.toFixed(2)}`;
+    wrapper.appendChild(summary);
+
+    // footer
+    const footer = doc.createElement("div");
+    footer.className = "footer";
+    footer.textContent = "Teburu Furniture Store";
+    wrapper.appendChild(footer);
+
+    // ปุ่มพิมพ์
+    const btns = doc.createElement("div");
+    btns.className = "btns";
+
+    const printBtn = doc.createElement("button");
+    printBtn.className = "print-btn";
+    printBtn.textContent = "🖨 พิมพ์ใบเสร็จ";
+    printBtn.onclick = () => receiptWindow.print();
+
+    btns.appendChild(printBtn);
+    wrapper.appendChild(btns);
+
+    body.appendChild(wrapper);
+    html.appendChild(head);
+    html.appendChild(body);
+
+    doc.open();
+    doc.appendChild(html);
+    doc.close();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// Show toast notification
+function showToast(message, type = "info") {
+    // Create toast if it doesn't exist
+    let toast = document.getElementById("toast");
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "toast";
+        toast.className = "toast";
+        document.body.appendChild(toast);
+    }
+
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "").trim();
+    }, 3000);
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', async function () {
+    createParticles();
+    await loadCartItems();
+
+    // Add event listeners for action buttons
+    const clearCartBtn = document.querySelector('.clear-cart-btn');
+    if (clearCartBtn) {
+        clearCartBtn.addEventListener('click', clearCart);
+    }
+
+    const checkoutBtn = document.querySelector('.checkout-btn');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', proceedToPayment);
     }
 });

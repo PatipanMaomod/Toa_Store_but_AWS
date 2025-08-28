@@ -667,6 +667,43 @@ app.delete('/api/cart', async (req, res) => {
   }
 });
 
+// ลด stock
+app.post("/api/update_stock", async (req, res) => {
+  try {
+    const { items } = req.body;  // items = [{id, quantity}, ...]
+
+    if (!items || items.length === 0) {
+      return res.status(400).json({ success: false, error: "Cart is empty" });
+    }
+
+    for (const item of items) {
+      const [result] = await pool.query(
+        "UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?",
+        [item.quantity, item.product_id, item.quantity]  
+      );
+
+      if (result.affectedRows === 0) {
+        return res.status(400).json({ success: false, error: `Not enough stock for product ${item.product_id}` });
+      }
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Update stock error:", err);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+});
+app.get("/api/stock", async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT id, name, stock FROM products"
+    );
+    res.json({ success: true, products: rows });
+  } catch (err) {
+    console.error("Stock fetch error:", err);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+});
 
 
 

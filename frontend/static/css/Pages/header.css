@@ -224,6 +224,13 @@ header {
   margin-bottom: 20px;
 }
 
+.modal-content h2 {
+  color: #000000;   /* สีส้ม */
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .modal-content input,
 .modal-content select {
     width: 100%;
@@ -246,6 +253,12 @@ header {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+}
+.modal-actions {
+  display: flex;
+  flex-direction: column; /* ให้ปุ่มเรียงลงล่าง */
+  gap: 10px;              /* เว้นระยะ 10px ระหว่างปุ่ม */
+  margin-top: 15px;
 }
 
 .modal-content button:hover {
@@ -333,6 +346,13 @@ header {
 .cart-total {
   margin: 20px 0;
   font-size: 18px;
+}
+
+.cart-actions {
+  display: flex;
+  flex-direction: column; /* ให้ปุ่มเรียงลงล่าง */
+  gap: 10px;              /* เว้นระยะ 10px ระหว่างปุ่ม */
+  margin-top: 15px;
 }
 
 #cartItems {

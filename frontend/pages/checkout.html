@@ -7,8 +7,6 @@
   <title>Checkout - Teburu</title>
   <link rel="stylesheet" href="/static/css/Pages/header.css">
   <link rel="stylesheet" href="/static/css/Pages/checkout.css">
-
-
 </head>
 
 <body>
@@ -32,12 +30,12 @@
 
       <div class="summary-row">
         <span class="summary-label">Subtotal</span>
-        <span class="summary-value" id="subtotal">$0.00</span>
+        <span class="summary-value" id="subtotal">0.00 THB</span>
       </div>
 
       <div class="summary-row">
         <span class="summary-label">Estimated Discount</span>
-        <span class="summary-value discount" id="discount">-$0.00</span>
+        <span class="summary-value discount" id="discount">-0.00 THB</span>
       </div>
 
       <div class="summary-row">
@@ -46,20 +44,31 @@
       </div>
 
       <div class="summary-row">
-        <span class="summary-label">Tax</span>
-        <span class="summary-value" id="tax">$0.00</span>
+        <span class="summary-label">Tax (VAT 7%)</span>
+        <span class="summary-value" id="tax">0.00 THB</span>
       </div>
 
-      <div class="summary-row">
+      <div class="summary-divider"></div>
+
+      <div class="summary-row total-row">
         <span class="summary-label">Total</span>
-        <span class="summary-value" id="total">$0.00</span>
+        <span class="summary-value total-price" id="total">0.00 THB</span>
       </div>
 
+      <!-- Payment Button -->
+      <div class="payment-section">
+        <button class="payment-btn" id="payment-btn" onclick="proceedToPayment()">
+          <span class="payment-icon">💳</span>
+          <span class="payment-text">Proceed to Payment</span>
+          <span class="payment-arrow">→</span>
+        </button>
+      </div>
 
+      <!-- Benefits Section -->
       <div class="benefits">
         <div class="benefit-item">
           <span>🚚</span>
-          <span>Free shipping above $79</span>
+          <span>Free shipping above 1,500 THB</span>
         </div>
         <div class="benefit-item">
           <span>🔒</span>
@@ -67,16 +76,18 @@
         </div>
         <div class="benefit-item">
           <span>↩️</span>
-          <span>60-day risk-free returns</span>
+          <span>30-day return policy</span>
         </div>
       </div>
     </div>
   </div>
 
+
+  
+
   <a href="javascript:history.back()" class="back-button">
     ← Back to Products
   </a>
-
 
 </body>
 <script src="/static/js/Pages/checkout.js"></script>
@@ -92,5 +103,139 @@
       loadCartItems();
     });
 </script>
+
+<style>
+/* Additional CSS for Payment Button */
+.summary-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ddd, transparent);
+  margin: 15px 0;
+}
+
+.total-row {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+  border-top: 2px solid #f0f0f0;
+  padding-top: 15px;
+  margin-bottom: 20px;
+}
+
+.total-price {
+  color: #e74c3c;
+  font-size: 1.3em;
+}
+
+.payment-section {
+  margin: 20px 0;
+}
+
+.payment-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 18px 20px;
+  border-radius: 12px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.payment-btn:hover {
+  background: linear-gradient(135deg, #218838, #1ea085);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+}
+
+.payment-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.payment-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.payment-btn:disabled:hover {
+  background: #6c757d;
+  transform: none;
+}
+
+.payment-icon {
+  font-size: 1.2em;
+  margin-right: 10px;
+}
+
+.payment-text {
+  flex: 1;
+  text-align: center;
+}
+
+.payment-arrow {
+  font-size: 1.2em;
+  margin-left: 10px;
+  transition: transform 0.3s ease;
+}
+
+.payment-btn:hover .payment-arrow {
+  transform: translateX(5px);
+}
+
+/* Loading state */
+.payment-btn.loading {
+  pointer-events: none;
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+}
+
+.payment-btn.loading .payment-text {
+  opacity: 0.7;
+}
+
+.payment-btn.loading .payment-arrow {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Empty cart state - disable button */
+.payment-btn.empty-cart {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.payment-btn.empty-cart:hover {
+  transform: none;
+  background: #6c757d;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .payment-btn {
+    padding: 16px 18px;
+    font-size: 1em;
+  }
+  
+  .payment-icon, .payment-arrow {
+    font-size: 1.1em;
+  }
+}
+
+
+
+</style>
 
 </html>
