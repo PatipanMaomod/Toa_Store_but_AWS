@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
@@ -6,24 +5,12 @@
     /* Use yellow for consistency with logo and site theme */
 }
 
-=======
-:root {
-    --primary: #ffc107;
-    --dark: #0a0a0a;
-    --light: #ffffff;
-    --muted: #1a1a1a;
-    --mint: #25ffbe;
-}
-
-
->>>>>>> Sora
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-<<<<<<< HEAD
 body {
     font-family: 'Inter', sans-serif;
     background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
@@ -108,45 +95,18 @@ header {
 
 .logo:hover::after {
     width: 100%;
-=======
-
-body {
-    font-family: Arial, sans-serif;
-    background: var(--dark);
-    color: var(--light);
-}
-
-
-header {
-    background: var(--dark);
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--primary);
->>>>>>> Sora
 }
 
 .nav {
     display: flex;
     align-items: center;
-<<<<<<< HEAD
     width: 100%;
-=======
->>>>>>> Sora
     gap: 30px;
 }
 
 .nav ul {
     list-style: none;
     display: flex;
-<<<<<<< HEAD
     gap: 30px;
     margin: 0;
 }
@@ -342,127 +302,6 @@ footer {
 }
 
 /* Modal Popup */
-=======
-    gap: 1rem;
-}
-
-
-.nav .link {
-    display: block;
-    padding: 10px 12px;
-    border-radius: 10px;
-    color: #e6eaf5;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.3s;
-}
-
-
-.nav .link:hover {
-    background: var(--muted);
-}
-
-
-.hero {
-    background: url('https://product-images-toa-shop.s3.ap-northeast-3.amazonaws.com/pro_images_S3/Image_home1.jpg') center/cover no-repeat;
-    height: 600px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--light);
-}
-
-
-.hero h1 {
-    font-size: 5rem;
-    margin-bottom: 1rem;
-}
-
-
-.btn {
-    background: var(--primary);
-    color: var(--dark);
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s;
-}
-
-
-.btn:hover {
-    background: #e0a800;
-}
-
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    padding: 2rem;
-}
-
-
-.card {
-    background: #111;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.3s, background 0.3s;
-}
-
-
-.card:hover {
-    background: #222;
-    transform: translateY(-5px);
-}
-
-
-.card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-
-.card-content {
-    padding: 1rem;
-}
-
-
-footer {
-    background: #111;
-    padding: 2rem;
-    text-align: center;
-    color: #000000;
-}
-
-/* ปุ่ม SIGN IN & JOIN US */
-.auth-buttons {
-    margin-left: auto;
-    display: flex;
-    gap: 10px;
-}
-
-.auth-buttons .btn {
-    background-color: #000;
-    color: #fff;
-    padding: 8px 16px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.auth-buttons .btn:hover {
-    background-color: #444;
-}
-
-/* ปุ่ม SIGN IN & JOIN US */
-
-/* --- Modal Popup --- */
->>>>>>> Sora
 .modal {
     display: none;
     position: fixed;
@@ -471,11 +310,7 @@ footer {
     top: 0;
     width: 100%;
     height: 100%;
-<<<<<<< HEAD
     background: rgba(0, 0, 0, 0.6);
-=======
-    background-color: rgba(0, 0, 0, 0.6);
->>>>>>> Sora
     justify-content: center;
     align-items: center;
 }
@@ -486,24 +321,13 @@ footer {
     border-radius: 8px;
     width: 350px;
     position: relative;
-<<<<<<< HEAD
     text-align: center;
-=======
->>>>>>> Sora
 }
 
 .modal-content h2 {
     margin-bottom: 15px;
 }
 
-<<<<<<< HEAD
-
-=======
-.modal-content h3 {
-    margin-bottom: 15px;
-    color: var(--primary);
-}
->>>>>>> Sora
 
 .modal-content input,
 .modal-content select {
@@ -517,7 +341,6 @@ footer {
 .modal-content button {
     width: 100%;
     padding: 10px;
-<<<<<<< HEAD
     background: linear-gradient(90deg, #ff8c42, #ff4e50);
     color: #000;
     border: none;
@@ -534,25 +357,12 @@ footer {
     background: linear-gradient(90deg, #ff4e50, #ff8c42);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(255, 211, 105, 0.4);
-=======
-    margin-top: 10px;
-    background: black;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.modal-content button:hover {
-    background: #000000;
->>>>>>> Sora
 }
 
 .close {
     position: absolute;
     top: 10px;
     right: 15px;
-<<<<<<< HEAD
     font-size: 24px;
     font-weight: bold;
     color: #000000;
@@ -631,13 +441,6 @@ footer {
     padding: 2rem;
 }
 
-=======
-    font-size: 20px;
-    cursor: pointer;
-}
-
-/* --- card --- */
->>>>>>> Sora
 .card {
     background: rgba(18, 19, 24, 0.8);
     backdrop-filter: blur(20px);
@@ -650,13 +453,10 @@ footer {
     overflow: hidden;
     opacity: 0;
     animation: cardSlideIn 0.8s ease forwards;
-<<<<<<< HEAD
     flex: 1 1 300px;
     /* From .products-container .card */
     max-width: 320px;
     /* From .products-container .card */
-=======
->>>>>>> Sora
 }
 
 .card:nth-child(1) {
@@ -766,7 +566,6 @@ footer {
     z-index: -1;
 }
 
-<<<<<<< HEAD
 
 .product-section {
     padding: 2rem;
@@ -812,8 +611,6 @@ footer {
     /* ให้การ์ด snap ตอนเลื่อน */
 }
 
-=======
->>>>>>> Sora
 .card button:hover::before {
     left: 0;
 }
@@ -822,7 +619,6 @@ footer {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(255, 211, 105, 0.4);
 }
-<<<<<<< HEAD
 
 .products-heading {
     text-align: center;
@@ -916,159 +712,15 @@ footer {
 
 .sectiondes h1 {
     font-size: 4rem;
-=======
-.products-container {
-    display: flex;
-    flex-wrap: wrap;       
-    gap: 20px;             
-    justify-content: center; 
-    padding: 2rem;
-}
-
-.products-container .card {
-    flex: 1 1 300px;       
-    max-width: 320px;      
-}
-
-.products-container .h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.section2{
-    background: url('/Image/Image_home2.jpg') center/cover no-repeat;
-    height: 600px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--light);
-}
-
-.section2 h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: var(--primary);      
-}
-
-.section2 p {
-    margin: 0.5rem 0;
-    color: #ccc;
-}
-
-.section2 .socials {
-    margin-top: 1.5rem;
-}
-
-.section2 .socials a {
-    color: var(--primary);
-    text-decoration: none;
-    margin: 0 10px;
-    font-weight: bold;
-    transition: color 0.3s;
-}
-
-.section2 .socials a:hover {
-    color: #bdbdbd;
-}
-
-/* คอนแท็กล่างสุด */
-footer {
-    background-color: #353535; /* เทาอ่อน ไม่แสบตา */
-    color: #333;
-    padding: 40px 20px;
-    font-family: Arial, sans-serif;
-}
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    max-width: 1200px;
-    margin: 0 auto;
-    flex-wrap: wrap;
-    gap: 30px;
-}
-
-.footer-left {
-    flex: 1;
-    min-width: 250px;
-}
-
-.footer-logo {
-    width: 150px; /* ปรับขนาดโลโก้ */
-    margin-bottom: 15px;
-}
-
-.footer-left p {
-    font-size: 0.95rem;
-    color: #979797;
-}
-
-.footer-right {
-    flex: 2;
-    min-width: 300px;
-}
-
-.footer-right h2 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #979797;
-}
-
-.footer-right p {
-    margin: 5px 0;
-    font-size: 1rem;
-    color: #979797;
-}
-
-.socials {
-    margin-top: 15px;
-}
-
-.socials a {
-    margin-right: 15px;
-    text-decoration: none;
-    color: #979797;
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-.socials a:hover {
-    color: #ff9900; /* สีไฮไลท์เวลา hover */
-}
-/* คอนแท็กล่างสุด */
-/* เหตุผลการขาย */
-.sectiondes {
-    background: linear-gradient(rgba(18, 19, 24, 0.9), rgba(18, 19, 24, 0.8)), 
-                url('https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100,f_auto/products/Gaming-Desks/CF-9500052/CF-9500052_11.webp') center/cover no-repeat;
-    color: #fff;
-    min-height: 100vh; 
-    padding: 100px 40px; 
-    display: flex;
-    align-items: center;
-    text-align: center;
-}
-.sectiondes h1 {
-    font-size: 4rem; 
->>>>>>> Sora
     font-weight: 800;
     margin-bottom: 20px;
     color: #ffcc66;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> Sora
 .sectiondes .subtitle {
     font-size: 1.8rem;
     margin-bottom: 60px;
     opacity: 0.9;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> Sora
 .reasons {
     display: flex;
     gap: 40px;
@@ -1077,10 +729,6 @@ footer {
     max-width: 1400px;
     margin: 0 auto;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> Sora
 .reason {
     background: rgba(255, 255, 255, 0.08);
     padding: 40px 30px;
@@ -1088,7 +736,6 @@ footer {
     width: 300px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-<<<<<<< HEAD
 
 .reason:nth-child(1) {
     margin-top: 0px;
@@ -1111,55 +758,13 @@ footer {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 }
 
-=======
-.reason:nth-child(1) {
-    margin-top: 0px;
-}
-.reason:nth-child(2) {
-    margin-top: 50px;
-}
-.reason:nth-child(3) {
-    margin-top: 100px;
-}
-.reason:nth-child(4) {
-    margin-top: 150px;
-}
-.reason:hover {
-    transform: translateY(-15px) scale(1.03);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-}
->>>>>>> Sora
 .reason h2 {
     font-size: 2rem;
     margin-bottom: 15px;
     color: #ffcc66;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> Sora
 .reason p {
     font-size: 1.2rem;
     opacity: 0.9;
     line-height: 1.6;
-<<<<<<< HEAD
-=======
-}
-.search-bar {
-    flex: 0 0 auto;   /* ไม่ขยายเต็มพื้นที่ */
-    margin-left: 20px; /* ช่องว่างระหว่างเมนูกับ search-bar */
-}
-
-.search-bar input {
-    width: 250px; /* ปรับความยาว input */
-    max-width: 100%; /* กรณีหน้าจอเล็ก */
-    padding: 8px 15px;
-    border-radius: 20px;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    transition: all 0.3s ease;
->>>>>>> Sora
 }
