@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Products - Teburu</title>
     <link rel="stylesheet" href="static\css\Pages\header.css">
     <link rel="stylesheet" href="static\css\Pages\home.css">
@@ -28,12 +29,95 @@
 
     <!-- Product list -->
     <div class="product-section">
+=======
+    <title>Teburu</title>
+    <link rel="stylesheet" href="\static\css\Pages\home.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">Teburu </div>
+        <nav class="nav">
+            <ul>
+                <li><a href="products" class="link">Products</a></li>
+                <li><a href="Support" class="link">Support</a></li>
+            </ul>
+        </nav>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="ค้นหาสินค้า..." onkeyup="filterProducts()">
+        </div>
+
+        <div class="auth-buttons">
+            <button class="btn" onclick="openModal('signinModal')">SIGN IN</button>
+            <button class="btn" onclick="openModal('registerModal')">JOIN US</button>
+        </div>
+        <div class="profile" id="profile" style="display: none;">
+            <img src="\static\images\user.png" alt="Profile" class="profile-img">
+        </div>
+    </header>
+
+    <section class="hero">
+        <div>
+            <h1>Best Your Ultimate Table</h1>
+            <a href="products" class="btn">Shop Now</a>
+        </div>
+    </section>
+
+
+
+    <!-- SIGN IN Modal -->
+    <div id="signinModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('signinModal')">&times;</span>
+            <h3>Sign In</h3>
+            <input type="email" placeholder="Email Address *">
+            <input type="password" placeholder="Password *">
+            <label><input type="checkbox"> Keep me logged in</label>
+            <button onclick="handleLogin()">SUBMIT</button>
+        </div>
+    </div>
+
+    <!-- REGISTER Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h3>Join Us</h3>
+            <input type="text" placeholder="First Name *">
+            <input type="text" placeholder="Last Name *">
+            <input type="email" placeholder="Email Address *">
+            <input type="password" placeholder="Password *">
+            <input type="password" placeholder="Confirm Password *">
+            <label><input type="checkbox" checked> I agree to the Terms and Conditions</label>
+            <button onclick="handleLogin()">SUBMIT</button>
+        </div>
+    </div>
+
+    <div id="Sign In Admin" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('Sign In Admin')">&times;</span>
+            <h3>Sign In Admin</h3>
+            <input type="email" placeholder="Email Address *">
+            <input type="password" placeholder="Password *">
+            <label><input type="checkbox"> Keep me logged in</label>
+            <button onclick="handleLogin()">SUBMIT</button>
+        </div>
+    </div>
+
+
+    <div class="product-section">
+        <!-- Product list -->
+>>>>>>> Sora
         <div class="products-container" id="product-list-home"></div>
     </div>
 
 
+<<<<<<< HEAD
 
     <!-- Reasons section -->
+=======
+    <!-- เหตุผลการขาย -->
+>>>>>>> Sora
     <section class="sectiondes">
         <div class="section-content">
             <h1>Why Buy from Teburu?</h1>
@@ -57,13 +141,21 @@
 
 
 
+<<<<<<< HEAD
 
     <!-- Footer -->
+=======
+    <!-- foote -->
+>>>>>>> Sora
     <footer>
         <div class="footer-container">
             <div class="footer-left">
                 <p>&copy; 2025 Teburu. All rights reserved.</p>
             </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> Sora
             <div class="footer-right">
                 <h2>Contact</h2>
                 <p><strong>Email:</strong> support@teburu.com</p>
@@ -78,6 +170,7 @@
         </div>
     </footer>
 
+<<<<<<< HEAD
     <script src="static/js/Pages/home.js"></script>
     <script src="static/js/API/API_loadPro.js"></script>
 
@@ -90,6 +183,13 @@
                 renderAuthButtons(); 
             });
     </script>
+=======
+
+    <script src="\static\js\Pages\home.js"></script>
+    <script src="\static\js\API\API_loadPro.js"></script>
+    <script src="\static\js\API\search.js"></script>
+
+>>>>>>> Sora
 </body>
 
 </html>
