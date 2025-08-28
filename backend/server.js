@@ -7,18 +7,11 @@ const path = require('path');
 const multer = require('multer');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const bcrypt = require('bcrypt');
-
-
 const session = require('express-session');
-
-const multer = require('multer');
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-
-const bcrypt = require('bcrypt');
-
 const app = express();
 
-<<<<<<< HEAD
+
+
 
 
 
@@ -37,13 +30,10 @@ app.use(session({
   }
 }));
 
-=======
->>>>>>> Sora
 // ---------- Middleware ----------
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-<<<<<<< HEAD
 function requireAdmin(req, res, next) {
   if (req.session && req.session.role === "admin") {
     next(); // ผ่าน ✅
@@ -52,8 +42,6 @@ function requireAdmin(req, res, next) {
   }
 }
 
-=======
->>>>>>> Sora
 
 // ---------- S3 Client ----------
 const s3 = new S3Client({ region: process.env.AWS_REGION });
@@ -61,16 +49,11 @@ const s3 = new S3Client({ region: process.env.AWS_REGION });
 // ---------- Static ----------
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
-<<<<<<< HEAD
 // ---------- Routes ----------
-=======
-// ---------- Pages ----------
->>>>>>> Sora
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'home.html'));
 });
 
-<<<<<<< HEAD
 app.get('/header', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'header.html'));
 });
@@ -79,53 +62,16 @@ app.get('/admin/header', (req, res) => {
 });
 
 
-=======
-// product list
->>>>>>> Sora
 app.get('/products', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'products.html'));
 });
 
 app.get('/product/:id', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'product.html'));
-<<<<<<< HEAD
-=======
-});
-
-app.get('/admin/product/:id/edit', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'edit_pro.html'));
-});
-
-
-app.get('/checkout', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'checkout.html'));
-});
-
-app.get('/upload', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'upload.html'));
-});
-
-app.get('/admin/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_login.html'));
-});
-
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'login.html'));
-});
-
-app.get('/admin/register', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'admin_register.html'));
-});
-
-
-app.get('/admin/management', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'management', 'management.html'));
->>>>>>> Sora
 });
 
 
 
-<<<<<<< HEAD
 app.get('/checkout', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'checkout.html'));
 });
@@ -194,8 +140,6 @@ app.get('/admin/products', (req, res) => {
 });
 
 
-=======
->>>>>>> Sora
 
 // ---------- API Products ----------
 app.get('/api/products', async (req, res) => {
@@ -432,7 +376,6 @@ app.post('/api/upload-multiple-to-s3', uploadMany.array('files', 10), async (req
 
 
 
-<<<<<<< HEAD
 
 // ---------- API Admin Login ----------
 app.post('/api/admin/login', async (req, res) => {
@@ -460,53 +403,10 @@ app.post('/api/admin/login', async (req, res) => {
     username: admin.username,
     role: admin.role || "admin"
   });
-=======
-// ---------- API Admin Login ----------
-app.post('/api/admin/login', async (req, res) => {
-  try {
-    const { username, password } = req.body; ว
-
-    if (!username || !password) {
-      return res.status(400).json({ error: 'กรุณากรอก username และ password' });
-    }
-
-    const [rows] = await pool.query(
-      `SELECT id, username, password_hash
-       FROM users
-       WHERE username = ?`,
-      [username]
-    );
-
-    if (rows.length === 0) {
-      return res.status(401).json({ error: 'ไม่พบ admin หรือสิทธิ์ไม่ถูกต้อง' });
-    }
-
-    const admin = rows[0];
-    const isMatch = await bcrypt.compare(password, admin.password_hash);
-
-    if (!isMatch) {
-      return res.status(401).json({ error: 'รหัสผ่านไม่ถูกต้อง' });
-    }
-    res.json({
-      message: 'เข้าสู่ระบบสำเร็จ',
-      adminId: admin.id,
-      username: admin.username,
-      role: admin.role
-    });
-
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({ error: 'Database query failed' });
-  }
->>>>>>> Sora
 });
 
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> Sora
 // ---------- API Admin Register ----------
 app.post('/api/admin/register', async (req, res) => {
   try {
@@ -535,7 +435,6 @@ app.post('/api/admin/register', async (req, res) => {
 });
 
 
-<<<<<<< HEAD
 // ---------- API Login (Customer) ----------
 app.post('/api/customers/login', async (req, res) => {
   const { username, password } = req.body;
@@ -592,8 +491,6 @@ app.post('/api/customers/register', async (req, res) => {
 });
 
 
-=======
->>>>>>> Sora
 
 // ---------- Error Handlers ----------
 app.use((err, _req, res, _next) => {
