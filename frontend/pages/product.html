@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Detail - Teburu</title>
+  <link rel="stylesheet" href="/static/css/Pages/header.css">
+  <link rel="stylesheet" href="/static/css/Pages/product.css">
+</head>
+
+<body>
+  <div class="bg-particles"></div>
+
+  <div id="header-placeholder"></div>
+
+
+  <div class="checkout-container">
+    <!-- Left Side -->
+    <div class="pro-section" id="product-detail"></div>
+
+    <!-- Right Side -->
+    <div class="order-summary" id="order-summary">
+      <h2>Order Summary</h2>
+      <div class="summary-row"><span class="summary-label">Price</span><span class="summary-value" id="price">-</span>
+      </div>
+      <div class="summary-row"><span class="summary-label">Stock</span><span class="summary-value" id="stock">-</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Quantity</span>
+        <span class="summary-value"><input type="number" id="quantity" value="1" min="1"
+            style="width:60px;text-align:center;"></span>
+      </div>
+      <div class="summary-row"><span>Total</span><span id="total">-</span></div>
+      <button class="checkout-btn" onclick="addToCart()">Add to Cart</button>
+    </div>
+  </div>
+
+  <a href="/products" class="back-button">← Back to Products</a>
+
+  <!-- Lightbox -->
+  <div id="lightbox" onclick="closeLightbox(event)">
+    <span onclick="closeLightbox()">✖</span>
+    <img id="lightboxImage" src="">
+  </div>
+
+  <script src="/static/js/Pages/product.js"></script>
+  <script src="/static/js/Pages/header.js"></script>
+  <script src="/static/js/session-check.js"></script>
+
+  <script>
+    fetch("/header")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("header-placeholder").innerHTML = html;
+        renderAuthButtons();
+      });
+  </script>
+</body>
+
+</html>
