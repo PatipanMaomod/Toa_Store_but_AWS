@@ -211,6 +211,11 @@ h1 {
 }
 
 .card {
+<<<<<<< HEAD
+=======
+    max-width: 350px; /* ไม่ให้การ์ดขยายเกินนี้ */
+    max-height: 570px;  
+>>>>>>> Sora
     background: rgba(18, 19, 24, 0.8);
     backdrop-filter: blur(20px);
     padding: 25px;
@@ -516,6 +521,7 @@ footer {
 }
 
 .btn-group {
+<<<<<<< HEAD
   display: flex;
   justify-content: center; /* จัดตรงกลาง */
   gap: 10px;               /* ระยะห่างระหว่างปุ่ม */
@@ -524,4 +530,34 @@ footer {
 
 .btn-group button {
   flex: 1;                 /* ปุ่มขนาดเท่ากัน */
+=======
+    display: flex;
+    justify-content: center;
+    /* จัดตรงกลาง */
+    gap: 10px;
+    /* ระยะห่างระหว่างปุ่ม */
+    margin-top: 15px;
+}
+
+.btn-group button {
+    flex: 1;
+    /* ปุ่มขนาดเท่ากัน */
+}
+
+.search-bar {
+    flex: 1;
+    /* กินพื้นที่ฝั่งซ้าย */
+}
+
+.search-bar input {
+    width: 60%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    outline: none;
+    transition: all 0.3s ease;
+>>>>>>> Sora
 }
