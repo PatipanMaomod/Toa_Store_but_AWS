@@ -29,17 +29,22 @@ function displayProducts(list) {
     const btnGroup = document.createElement('div');
     btnGroup.className = "btn-group";
 
-    const btn = document.createElement('button');
-    btn.textContent = "Add to Cart";
-    btn.onclick = () => addToCart(p);
-    btnGroup.appendChild(btn);
+      // ปุ่ม Add to Cart
+      const btn = document.createElement('button');
+      btn.textContent = "Add to Cart";
+      btn.onclick = () => addToCart(p);
 
-    const viewBtn = document.createElement('button');
-    viewBtn.textContent = "View Details";
-    viewBtn.onclick = () => window.location.href = `/product/${p.id}`;
-    btnGroup.appendChild(viewBtn);
+      // ปุ่ม View Details
+      const viewBtn = document.createElement('button');
+      viewBtn.textContent = "View Details";
+      viewBtn.onclick = () => {
+        window.location.href = `/product/${p.id}`;
+      };
 
-    card.appendChild(btnGroup);
+      btnGroup.appendChild(btn);
+      btnGroup.appendChild(viewBtn);
+      card.appendChild(btnGroup)
+
     container.appendChild(card);
   });
 }
@@ -52,6 +57,3 @@ function filterProducts() {
 
 window.addEventListener('DOMContentLoaded', loadAllProducts);
 
-function addToCart(product) {
-  alert(`เพิ่มสินค้า: ${product.name} ลงตะกร้า`);
-}
