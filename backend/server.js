@@ -22,8 +22,8 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: false, // true ถ้าใช้ https
-    // maxAge: 1000 * 60 * 60 // 1 ชั่วโมง
-    maxAge: 1000 * 60 // 1 นาที
+    maxAge: 1000 * 60 * 60 // 1 ชั่วโมง
+    // maxAge: 1000 * 60 // 1 นาที
 
   }
 }));
@@ -34,17 +34,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 function requireAdmin(req, res, next) {
   if (req.session && req.session.role === "admin") {
-    next(); 
+    next();
   } else {
     res.redirect("/admin/login");   // ไปหน้า login
   }
 }
-function requireLogin(req, res, next) {
-  if (!req.session.customerId) {
-    return res.status(440).json({ error: "Session expired" }); // 440: Login Timeout
-  }
-  next();
-}
+
 
 // ---------- S3 Client ----------
 const s3 = new S3Client({ region: process.env.AWS_REGION });
@@ -671,10 +666,6 @@ app.delete('/api/cart', async (req, res) => {
     res.status(500).json({ error: 'Failed to clear cart' });
   }
 });
-
-
-
-
 
 
 

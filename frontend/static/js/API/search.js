@@ -51,3 +51,7 @@ function filterProducts() {
 }
 
 window.addEventListener('DOMContentLoaded', loadAllProducts);
+
+function addToCart(product) {
+  alert(`เพิ่มสินค้า: ${product.name} ลงตะกร้า`);
+}
