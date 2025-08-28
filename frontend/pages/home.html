@@ -25,9 +25,10 @@
     </div>
 
 
-
-    <!-- Product list -->
-        <div class="products-container" id="product-filter"></div>
+    <div class="products-container">
+        <!-- Product list -->
+        <div class="products-container" id="product-list-home"></div>
+    </div>
 
 
 
@@ -78,14 +79,14 @@
 
     <script src="static/js/Pages/home.js"></script>
     <script src="static/js/API/API_loadPro.js"></script>
-
+    <script src="static\js\API\search.js"></script>
     <script src="static/js/Pages/header.js"></script>
     <script>
         fetch("/header")
             .then(res => res.text())
             .then(html => {
                 document.getElementById("header-placeholder").innerHTML = html;
-                renderAuthButtons(); 
+                renderAuthButtons();
             });
     </script>
 </body>

@@ -19,7 +19,10 @@
 
   <!-- Header placeholder -->
   <div id="header-placeholder"></div>
-
+  
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="ค้นหาสินค้า..." onkeyup="filterProducts()">
+  </div>
 
 
 
@@ -27,7 +30,7 @@
 
 
   <!-- Product list -->
-  <div class="products-container" id="product-list-pro"></div>
+  <div class="products-container" id="product-filter"></div>
 
   <!-- Cart Panel -->
   <div class="cart-panel" id="cart-panel">
@@ -51,6 +54,7 @@
   <script src="static/js/Pages/products.js"></script>
   <script src="static/js/API/API_loadPro.js"></script>
   <script src="static/js/Pages/header.js"></script>
+  <script src="static\js\API\search.js"></script>
   <script>
     fetch("/header")
       .then(res => res.text())
