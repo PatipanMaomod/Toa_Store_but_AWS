@@ -1,8 +1,8 @@
+let cartItems = [];
+
 // Generate background particles
 function createParticles() {
     const particlesContainer = document.querySelector('.bg-particles');
-    if (!particlesContainer) return;
-    
     for (let i = 0; i < 50; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
@@ -14,80 +14,73 @@ function createParticles() {
     }
 }
 
-let cartItems = [];
-
 // Load cart items from API
 async function loadCartItems() {
-    const container = document.getElementById('cart-items-container');
-    const cartCount = document.getElementById('cart-count');
-
-    if (!container || !cartCount) return;
-
     try {
         const res = await fetch("/api/cart", { credentials: "include" });
         if (!res.ok) {
             const data = await res.json();
-            showToast(data.error || "กรุณาเข้าสู่ระบบเพื่อดูตะกร้าสินค้า");
-            // Redirect to login if not authenticated
-            window.location.href = "/";
+            showToast(data.error || "⚠ Please login to view checkout");
+            window.location.href = "/login";
             return;
         }
 
         cartItems = await res.json();
         renderCart();
         updateSummary();
-        
     } catch (err) {
         console.error("Load cart error:", err);
-        showToast("ไม่สามารถโหลดตะกร้าสินค้าได้");
+        showToast("⚠ Failed to load cart items");
+        cartItems = [];
+        renderCart();
     }
 }
 
+// Render cart items
 function renderCart() {
     const container = document.getElementById('cart-items-container');
     const cartCount = document.getElementById('cart-count');
-
-    if (!container || !cartCount) return;
 
     if (cartItems.length === 0) {
         container.innerHTML = `
           <div class="empty-cart">
             <div class="empty-cart-icon">🛒</div>
-            <h3>ตะกร้าสินค้าว่างเปล่า</h3>
-            <p>เพิ่มสินค้าเพื่อเริ่มต้นการสั่งซื้อ!</p>
-            <a href="/products" class="continue-shopping">กลับไปช็อปปิ้ง</a>
+            <h3>Your cart is empty</h3>
+            <p>Add some amazing products to get started!</p>
+            <a href="/" class="back-to-shop">← Back to Shop</a>
           </div>
         `;
         cartCount.textContent = '0';
+        updateSummary();
         return;
     }
 
-    let totalItems = 0;
-    container.innerHTML = cartItems.map((item) => {
-        totalItems += item.quantity;
+    let totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    
+    container.innerHTML = cartItems.map((item, index) => {
         const imageUrl = item.image_main && item.image_main.length > 0 
             ? item.image_main[0] 
-            : 'https://via.placeholder.com/80';
+            : 'https://via.placeholder.com/80x80?text=No+Image';
 
         return `
-          <div class="cart-item">
+          <div class="cart-item" data-cart-id="${item.cart_id}">
             <div class="item-image">
-              <img src="${imageUrl}" alt="${item.name}" />
+              <img src="${imageUrl}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80x80?text=Error'">
             </div>
             <div class="item-details">
               <div class="item-name">${item.name}</div>
-              <div class="item-price">฿${item.price.toFixed(2)} ต่อชิ้น</div>
-              <div class="item-stock">คงเหลือ: ${item.stock} ชิ้น</div>
+              <div class="item-price">${item.price} THB each</div>
+              <div class="item-stock">Stock: ${item.stock}</div>
             </div>
             <div class="quantity-controls">
-              <button class="quantity-btn" onclick="changeQuantity(${item.cart_id}, ${item.quantity - 1})">-</button>
+              <button class="quantity-btn" onclick="updateQuantity(${item.cart_id}, ${item.quantity - 1}, ${item.stock})">-</button>
               <span class="quantity-display">${item.quantity}</span>
-              <button class="quantity-btn" onclick="changeQuantity(${item.cart_id}, ${item.quantity + 1})">+</button>
+              <button class="quantity-btn" onclick="updateQuantity(${item.cart_id}, ${item.quantity + 1}, ${item.stock})">+</button>
             </div>
             <div class="item-total">
-              <div class="item-total-price">฿${(item.price * item.quantity).toFixed(2)}</div>
-              <button class="remove-btn" onclick="removeItem(${item.cart_id})">ลบ</button>
+              ${(item.price * item.quantity).toFixed(2)} THB
             </div>
+            <button class="remove-btn" onclick="removeItem(${item.cart_id})">Remove</button>
           </div>
         `;
     }).join('');
@@ -95,10 +88,15 @@ function renderCart() {
     cartCount.textContent = totalItems;
 }
 
-// Change quantity of cart item
-async function changeQuantity(cartId, newQuantity) {
+// Update item quantity
+async function updateQuantity(cartId, newQuantity, maxStock) {
     if (newQuantity < 1) {
         removeItem(cartId);
+        return;
+    }
+
+    if (newQuantity > maxStock) {
+        showToast(`⚠ Maximum stock available: ${maxStock}`);
         return;
     }
 
@@ -112,17 +110,16 @@ async function changeQuantity(cartId, newQuantity) {
 
         const data = await res.json();
         if (!res.ok) {
-            showToast(data.error || "ไม่สามารถอัพเดทจำนวนสินค้าได้");
+            showToast(data.error || "⚠ Failed to update quantity");
             return;
         }
 
-        // Reload cart items
-        await loadCartItems();
-        showToast("อัพเดทจำนวนสินค้าเรียบร้อย");
-        
+        showToast("✅ Quantity updated");
+        await loadCartItems(); // Reload cart items
+        await updateCartCount(); // Update header cart count
     } catch (err) {
         console.error("Update quantity error:", err);
-        showToast("ไม่สามารถอัพเดทจำนวนสินค้าได้");
+        showToast("⚠ Failed to update quantity");
     }
 }
 
@@ -136,20 +133,20 @@ async function removeItem(cartId) {
 
         const data = await res.json();
         if (!res.ok) {
-            showToast(data.error || "ไม่สามารถลบสินค้าได้");
+            showToast(data.error || "⚠ Failed to remove item");
             return;
         }
 
-        // Reload cart items
-        await loadCartItems();
-        showToast("ลบสินค้าจากตะกร้าเรียบร้อย");
-        
+        showToast("✅ Item removed from cart");
+        await loadCartItems(); // Reload cart items
+        await updateCartCount(); // Update header cart count
     } catch (err) {
         console.error("Remove item error:", err);
-        showToast("ไม่สามารถลบสินค้าได้");
+        showToast("⚠ Failed to remove item");
     }
 }
 
+// Update order summary
 function updateSummary() {
     let subtotal = 0;
 
@@ -157,48 +154,110 @@ function updateSummary() {
         subtotal += item.price * item.quantity;
     });
 
-    const discount = subtotal > 2000 ? subtotal * 0.1 : 0; // ส่วนลด 10% หากเกิน 2000 บาท
-    const tax = (subtotal - discount) * 0.07; // VAT 7%
-    const shipping = subtotal > 800 ? 0 : 50; // ฟรีค่าส่งเมื่อซื้อเกิน 800 บาท
+    // Calculate discounts and fees
+    const discount = subtotal > 2000 ? subtotal * 0.1 : 0; // 10% discount if over 2000 THB
+    const shipping = subtotal > 1500 ? 0 : 150; // Free shipping over 1500 THB
+    const tax = (subtotal - discount) * 0.07; // 7% VAT
     const total = subtotal - discount + tax + shipping;
 
-    const subtotalEl = document.getElementById('subtotal');
-    const discountEl = document.getElementById('discount');
-    const taxEl = document.getElementById('tax');
-    const shippingEl = document.getElementById('shipping');
-    const totalEl = document.getElementById('total');
+    // Update UI
+    document.getElementById('subtotal').textContent = `${subtotal.toFixed(2)} THB`;
+    document.getElementById('discount').textContent = `-${discount.toFixed(2)} THB`;
+    document.getElementById('tax').textContent = `${tax.toFixed(2)} THB`;
+    document.getElementById('shipping').textContent = shipping === 0 ? 'Free' : `${shipping.toFixed(2)} THB`;
+    document.getElementById('total').textContent = `${total.toFixed(2)} THB`;
 
-    if (subtotalEl) subtotalEl.textContent = `฿${subtotal.toFixed(2)}`;
-    if (discountEl) discountEl.textContent = `-฿${discount.toFixed(2)}`;
-    if (taxEl) taxEl.textContent = `฿${tax.toFixed(2)}`;
-    if (shippingEl) shippingEl.textContent = shipping === 0 ? 'ฟรี' : `฿${shipping.toFixed(2)}`;
-    if (totalEl) totalEl.textContent = `฿${total.toFixed(2)}`;
+    // Update benefits text
+    updateBenefitsText(subtotal);
 }
 
-// Load cart count for header
-async function loadCartCount() {
-    const cartCount = document.getElementById("cartCount");
-    if (!cartCount) return;
+// Update benefits text based on subtotal
+function updateBenefitsText(subtotal) {
+    const benefitsContainer = document.querySelector('.benefits');
+    if (!benefitsContainer) return;
+
+    const shippingText = subtotal > 1500 
+        ? "Free shipping applied!" 
+        : `Add ${(1500 - subtotal).toFixed(2)} THB more for free shipping`;
+
+    benefitsContainer.innerHTML = `
+        <div class="benefit-item">
+            <span>🚚</span>
+            <span>${shippingText}</span>
+        </div>
+        <div class="benefit-item">
+            <span>🔒</span>
+            <span>Secure payment processing</span>
+        </div>
+        <div class="benefit-item">
+            <span>↩️</span>
+            <span>30-day return policy</span>
+        </div>
+        ${subtotal > 2000 ? `
+        <div class="benefit-item discount-applied">
+            <span>🎉</span>
+            <span>10% discount applied!</span>
+        </div>
+        ` : ''}
+    `;
+}
+
+// Clear entire cart
+async function clearCart() {
+    if (!confirm("Are you sure you want to clear your entire cart?")) {
+        return;
+    }
 
     try {
-        const res = await fetch("/api/cart", { credentials: "include" });
+        const res = await fetch("/api/cart", {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        const data = await res.json();
         if (!res.ok) {
-            cartCount.textContent = "0";
+            showToast(data.error || "⚠ Failed to clear cart");
             return;
         }
 
-        const cartItems = await res.json();
-        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-        cartCount.textContent = totalItems;
+        showToast("✅ Cart cleared");
+        await loadCartItems(); // Reload cart items
+        await updateCartCount(); // Update header cart count
     } catch (err) {
-        console.error("Load cart count error:", err);
-        cartCount.textContent = "0";
+        console.error("Clear cart error:", err);
+        showToast("⚠ Failed to clear cart");
+    }
+}
+
+// Proceed to payment (placeholder)
+function proceedToPayment() {
+    if (cartItems.length === 0) {
+        showToast("⚠ Your cart is empty!");
+        return;
+    }
+
+    // Calculate final total
+    let subtotal = 0;
+    cartItems.forEach(item => {
+        subtotal += item.price * item.quantity;
+    });
+
+    const discount = subtotal > 2000 ? subtotal * 0.1 : 0;
+    const shipping = subtotal > 1500 ? 0 : 150;
+    const tax = (subtotal - discount) * 0.07;
+    const finalTotal = subtotal - discount + tax + shipping;
+
+    // For now, show confirmation
+    if (confirm(`Proceed to payment?\nTotal: ${finalTotal.toFixed(2)} THB`)) {
+        showToast("🚧 Payment integration coming soon!");
+        // TODO: Implement actual payment integration
+        // window.location.href = "/payment";
     }
 }
 
 // Show toast notification
-function showToast(message, type = "success") {
-    // Create toast element if it doesn't exist
+function showToast(message, type = "info") {
+    // Create toast if it doesn't exist
     let toast = document.getElementById("toast");
     if (!toast) {
         toast = document.createElement("div");
@@ -215,20 +274,19 @@ function showToast(message, type = "success") {
     }, 3000);
 }
 
-// Proceed to payment (placeholder)
-async function proceedToCheckout() {
-    if (cartItems.length === 0) {
-        showToast("ตะกร้าสินค้าว่างเปล่า");
-        return;
-    }
-
-    // Here you would implement actual payment processing
-    // For now, just show a success message
-    alert("การชำระเงินจะถูกพัฒนาในอนาคต\nขณะนี้เป็นเพียงการจำลองการทำงาน");
-}
-
 // Initialize page
 document.addEventListener('DOMContentLoaded', async function () {
     createParticles();
     await loadCartItems();
+
+    // Add event listeners for action buttons
+    const clearCartBtn = document.querySelector('.clear-cart-btn');
+    if (clearCartBtn) {
+        clearCartBtn.addEventListener('click', clearCart);
+    }
+
+    const checkoutBtn = document.querySelector('.checkout-btn');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', proceedToPayment);
+    }
 });
