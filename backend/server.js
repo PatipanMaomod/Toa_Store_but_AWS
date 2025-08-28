@@ -13,8 +13,6 @@ const app = express();
 
 
 
-
-
 // ---------- Session Middleware ----------
 app.use(session({
   key: 'sessionId',
@@ -36,12 +34,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 function requireAdmin(req, res, next) {
   if (req.session && req.session.role === "admin") {
-    next(); // ผ่าน ✅
+    next(); 
   } else {
     res.redirect("/admin/login");   // ไปหน้า login
   }
 }
-
+function requireLogin(req, res, next) {
+  if (!req.session.customerId) {
+    return res.status(440).json({ error: "Session expired" }); // 440: Login Timeout
+  }
+  next();
+}
 
 // ---------- S3 Client ----------
 const s3 = new S3Client({ region: process.env.AWS_REGION });
@@ -69,6 +72,8 @@ app.get('/products', (req, res) => {
 app.get('/product/:id', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'product.html'));
 });
+
+
 
 
 
@@ -261,7 +266,6 @@ app.put('/api/products/:id', async (req, res) => {
 
 
 
-
 // ---------- API Upload Product Images ----------
 app.put('/api/products/img/upload/:id', async (req, res) => {
   try {
@@ -283,9 +287,6 @@ app.put('/api/products/img/upload/:id', async (req, res) => {
     res.status(500).json({ error: 'Database update failed' });
   }
 });
-
-
-
 
 
 
@@ -395,7 +396,7 @@ app.post('/api/admin/login', async (req, res) => {
   // เก็บ session
   req.session.adminId = admin.id;
   req.session.username = admin.username;
-  req.session.role = admin.role || "admin"; 
+  req.session.role = admin.role || "admin";
 
   res.json({
     message: "เข้าสู่ระบบสำเร็จ",
@@ -489,6 +490,192 @@ app.post('/api/customers/register', async (req, res) => {
     }
   }
 });
+
+
+
+
+
+// ---------- API Add to Cart ----------
+app.post('/api/cart', async (req, res) => {
+  if (!req.session.customerId) {
+    return res.status(401).json({ error: 'Please login to add items to cart' });
+  }
+
+  const { product_id, quantity } = req.body;
+
+  if (!product_id || !quantity || quantity < 1) {
+    return res.status(400).json({ error: 'Invalid product ID or quantity' });
+  }
+
+  try {
+    // Check if product exists and has enough stock
+    const [product] = await pool.query('SELECT stock FROM products WHERE id = ?', [product_id]);
+    if (product.length === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    if (product[0].stock < quantity) {
+      return res.status(400).json({ error: 'Insufficient stock' });
+    }
+
+    // Check if item already exists in cart
+    const [existing] = await pool.query(
+      'SELECT id, quantity FROM cart WHERE customer_id = ? AND product_id = ?',
+      [req.session.customerId, product_id]
+    );
+
+    if (existing.length > 0) {
+      // Update quantity if item exists
+      const newQuantity = existing[0].quantity + quantity;
+      if (product[0].stock < newQuantity) {
+        return res.status(400).json({ error: 'Insufficient stock for updated quantity' });
+      }
+      await pool.query(
+        'UPDATE cart SET quantity = ? WHERE id = ?',
+        [newQuantity, existing[0].id]
+      );
+    } else {
+      // Add new item to cart
+      await pool.query(
+        'INSERT INTO cart (customer_id, product_id, quantity) VALUES (?, ?, ?)',
+        [req.session.customerId, product_id, quantity]
+      );
+    }
+
+    res.json({ message: 'Item added to cart successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to add item to cart' });
+  }
+});
+
+// ---------- API Get Cart Items ----------
+app.get('/api/cart', async (req, res) => {
+  if (!req.session.customerId) {
+    return res.status(401).json({ error: 'Please login to view cart' });
+  }
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT c.id, c.product_id, c.quantity, p.name, p.price, p.stock, pi.image_url_main
+      FROM cart c
+      JOIN products p ON c.product_id = p.id
+      LEFT JOIN product_image pi ON p.id = pi.product_id
+      WHERE c.customer_id = ?
+    `, [req.session.customerId]);
+
+    const cartItems = [];
+    const map = {};
+
+    rows.forEach(row => {
+      if (!map[row.id]) {
+        map[row.id] = {
+          cart_id: row.id,
+          product_id: row.product_id,
+          name: row.name,
+          price: row.price,
+          stock: row.stock,
+          quantity: row.quantity,
+          image_main: []
+        };
+        cartItems.push(map[row.id]);
+      }
+
+      if (row.image_url_main) map[row.id].image_main.push(row.image_url_main);
+    });
+
+    res.json(cartItems);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to retrieve cart' });
+  }
+});
+
+// ---------- API Update Cart Item Quantity ----------
+app.put('/api/cart/:cart_id', async (req, res) => {
+  if (!req.session.customerId) {
+    return res.status(401).json({ error: 'Please login to update cart' });
+  }
+
+  const { cart_id } = req.params;
+  const { quantity } = req.body;
+
+  if (!quantity || quantity < 1) {
+    return res.status(400).json({ error: 'Invalid quantity' });
+  }
+
+  try {
+    // Check if cart item exists and belongs to the user
+    const [cartItem] = await pool.query(
+      'SELECT product_id FROM cart WHERE id = ? AND customer_id = ?',
+      [cart_id, req.session.customerId]
+    );
+
+    if (cartItem.length === 0) {
+      return res.status(404).json({ error: 'Cart item not found' });
+    }
+
+    // Check stock availability
+    const [product] = await pool.query('SELECT stock FROM products WHERE id = ?', [cartItem[0].product_id]);
+    if (product[0].stock < quantity) {
+      return res.status(400).json({ error: 'Insufficient stock' });
+    }
+
+    await pool.query(
+      'UPDATE cart SET quantity = ? WHERE id = ?',
+      [quantity, cart_id]
+    );
+
+    res.json({ message: 'Cart item updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update cart item' });
+  }
+});
+
+// ---------- API Remove Item from Cart ----------
+app.delete('/api/cart/:cart_id', async (req, res) => {
+  if (!req.session.customerId) {
+    return res.status(401).json({ error: 'Please login to remove items from cart' });
+  }
+
+  const { cart_id } = req.params;
+
+  try {
+    const [result] = await pool.query(
+      'DELETE FROM cart WHERE id = ? AND customer_id = ?',
+      [cart_id, req.session.customerId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Cart item not found' });
+    }
+
+    res.json({ message: 'Item removed from cart successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to remove item from cart' });
+  }
+});
+
+// ---------- API Clear Cart ----------
+app.delete('/api/cart', async (req, res) => {
+  if (!req.session.customerId) {
+    return res.status(401).json({ error: 'Please login to clear cart' });
+  }
+
+  try {
+    await pool.query('DELETE FROM cart WHERE customer_id = ?', [req.session.customerId]);
+    res.json({ message: 'Cart cleared successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to clear cart' });
+  }
+});
+
+
+
+
+
 
 
 

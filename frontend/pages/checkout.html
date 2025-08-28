@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout - Teburu</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
+
     * {
       margin: 0;
       padding: 0;
@@ -45,12 +46,15 @@
         transform: translateY(100vh) rotate(0deg);
         opacity: 0;
       }
+
       10% {
         opacity: 1;
       }
+
       90% {
         opacity: 1;
       }
+
       100% {
         transform: translateY(-100px) rotate(360deg);
         opacity: 0;
@@ -453,12 +457,12 @@
         gap: 30px;
         padding: 30px 20px;
       }
-      
+
       .order-summary {
         position: relative;
         top: auto;
       }
-      
+
       header {
         padding: 15px 20px;
       }
@@ -467,11 +471,11 @@
         flex-direction: column;
         gap: 15px;
       }
-      
+
       .nav ul {
         gap: 20px;
       }
-      
+
       .back-button {
         margin: 20px;
       }
@@ -482,19 +486,19 @@
         flex-direction: column;
         gap: 10px;
       }
-      
+
       .nav ul {
         flex-wrap: wrap;
         justify-content: center;
         gap: 15px;
       }
-      
+
       .cart-item {
         flex-direction: column;
         text-align: center;
         gap: 15px;
       }
-      
+
       .quantity-controls {
         align-self: center;
       }
@@ -521,16 +525,22 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
+
 <body>
   <!-- Animated background particles -->
   <div class="bg-particles"></div>
 
-      <header>
+  <header>
     <div class="header-content">
       <div class="logo">Teburu</div>
       <nav class="nav">
@@ -557,27 +567,27 @@
     <!-- Right Side - Order Summary -->
     <div class="order-summary">
       <h2>Order Summary</h2>
-      
+
       <div class="summary-row">
         <span class="summary-label">Subtotal</span>
         <span class="summary-value" id="subtotal">$0.00</span>
       </div>
-      
+
       <div class="summary-row">
         <span class="summary-label">Estimated Discount</span>
         <span class="summary-value discount" id="discount">-$0.00</span>
       </div>
-      
+
       <div class="summary-row">
         <span class="summary-label">Shipping</span>
         <span class="summary-value" id="shipping">Free</span>
       </div>
-      
+
       <div class="summary-row">
         <span class="summary-label">Tax</span>
         <span class="summary-value" id="tax">$0.00</span>
       </div>
-      
+
       <div class="summary-row">
         <span class="summary-label">Total</span>
         <span class="summary-value" id="total">$0.00</span>
@@ -589,17 +599,17 @@
             <label for="fullName">Full Name</label>
             <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
           </div>
-          
+
           <div class="form-group">
             <label for="email">Email Address</label>
             <input type="email" id="email" name="email" placeholder="Enter your email" required>
           </div>
-          
+
           <div class="form-group">
             <label for="address">Shipping Address</label>
             <input type="text" id="address" name="address" placeholder="Enter your shipping address" required>
           </div>
-          
+
           <button type="submit" class="checkout-btn">
             Complete Order
           </button>
@@ -630,18 +640,18 @@
   <script>
     // Product data with images and prices
     const productData = {
-      'Gaming Keyboard': { 
-        icon: '⌨️', 
+      'Gaming Keyboard': {
+        icon: '⌨️',
         price: 149.99,
         image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6xRFNeGoO4njAGt0hambMZ28NbNBP4eICHQ&s'
       },
-      'Gaming Mouse': { 
-        icon: '🖱️', 
+      'Gaming Mouse': {
+        icon: '🖱️',
         price: 79.99,
         image: 'https://th.thermaltake.com/media/catalog/product/cache/6af153fd0a0c509bdfcdfb60a394dd9c/t/o/toughdesk500lrgb_01_1.jpg'
       },
-      'Gaming Headset': { 
-        icon: '🎧', 
+      'Gaming Headset': {
+        icon: '🎧',
         price: 199.99,
         image: 'https://th.thermaltake.com/media/catalog/product/cache/cc8b24283b13da6bc2ff91682c03b54b/0/1/01_6_1.jpg'
       }
@@ -668,7 +678,7 @@
       // Try to get from URL first (when redirected from products page)
       const urlParams = new URLSearchParams(window.location.search);
       const cartParam = urlParams.get('cart');
-      
+
       if (cartParam) {
         try {
           const cartData = JSON.parse(decodeURIComponent(cartParam));
@@ -686,7 +696,7 @@
           console.error('Error parsing cart data:', e);
         }
       }
-      
+
       // Fallback to localStorage or return empty cart
       try {
         const storedCart = localStorage.getItem('cart');
@@ -699,7 +709,7 @@
     function renderCart() {
       const container = document.getElementById('cart-items-container');
       const cartCount = document.getElementById('cart-count');
-      
+
       if (cart.length === 0) {
         container.innerHTML = `
           <div class="empty-cart">
@@ -717,7 +727,7 @@
       container.innerHTML = cart.map((item, index) => {
         const product = productData[item.name] || { icon: '📦', price: 99.99 };
         totalItems += item.quantity;
-        
+
         return `
           <div class="cart-item">
             <div class="item-image">
@@ -736,7 +746,7 @@
           </div>
         `;
       }).join('');
-      
+
       cartCount.textContent = totalItems;
       updateSummary();
     }
@@ -758,17 +768,17 @@
 
     function updateSummary() {
       let subtotal = 0;
-      
+
       cart.forEach(item => {
         const product = productData[item.name] || { price: 99.99 };
         subtotal += product.price * item.quantity;
       });
-      
+
       const discount = subtotal > 200 ? subtotal * 0.1 : 0; // 10% discount if over $200
       const tax = (subtotal - discount) * 0.08; // 8% tax
       const shipping = subtotal > 79 ? 0 : 9.99; // Free shipping over $79
       const total = subtotal - discount + tax + shipping;
-      
+
       document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
       document.getElementById('discount').textContent = `-$${discount.toFixed(2)}`;
       document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
@@ -782,20 +792,20 @@
 
     function submitForm(event) {
       event.preventDefault();
-      
+
       if (cart.length === 0) {
         alert("Your cart is empty! Please add some products first.");
         return;
       }
-      
+
       // Add loading state
       const form = event.target;
       const submitBtn = form.querySelector('.checkout-btn');
       const originalText = submitBtn.textContent;
-      
+
       submitBtn.textContent = 'Processing...';
       submitBtn.classList.add('loading');
-      
+
       // Simulate processing
       setTimeout(() => {
         const formData = new FormData(form);
@@ -804,9 +814,9 @@
           email: formData.get('email'),
           address: formData.get('address')
         };
-        
+
         alert(`🎉 Order placed successfully!\n\nThank you, ${customerInfo.name}!\nConfirmation sent to: ${customerInfo.email}\n\nYour gaming gear will be shipped to:\n${customerInfo.address}`);
-        
+
         // Clear cart and redirect
         localStorage.removeItem('cart');
         window.location.href = 'index.html';
@@ -814,14 +824,53 @@
     }
 
     // Initialize page
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       createParticles();
       cart = getCartData();
       renderCart();
-      
+
       // Add form submit handler
       document.getElementById('checkout-form').addEventListener('submit', submitForm);
     });
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const cartItemsContainer = document.getElementById("checkoutItems");
+      const checkoutTotal = document.getElementById("checkoutTotal");
+
+      try {
+        const res = await fetch("/api/cart", { credentials: "include" });
+        if (!res.ok) {
+          const data = await res.json();
+          showToast(data.error || "❌ Please login to view checkout");
+          window.location.href = "/login";
+          return;
+        }
+
+        const cartItems = await res.json();
+        cartItemsContainer.innerHTML = "";
+        let total = 0;
+
+        cartItems.forEach(item => {
+          total += item.price * item.quantity;
+          const itemElement = document.createElement("div");
+          itemElement.className = "cart-item";
+          itemElement.innerHTML = `
+        <img src="${item.image_main[0] || 'https://via.placeholder.com/50'}" alt="${item.name}">
+        <div>
+          <strong>${item.name}</strong><br>
+          <span>${item.price} THB x ${item.quantity}</span>
+        </div>
+      `;
+          cartItemsContainer.appendChild(itemElement);
+        });
+
+        checkoutTotal.textContent = total.toFixed(2);
+      } catch (err) {
+        console.error("Checkout error:", err);
+        showToast("❌ Failed to load checkout");
+      }
+    });
   </script>
 </body>
+
 </html>

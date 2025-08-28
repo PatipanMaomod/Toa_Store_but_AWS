@@ -1,37 +1,86 @@
-// โหลด header.html เข้าไปในแต่ละหน้า
+// Load header.html into each page
 document.addEventListener("DOMContentLoaded", async () => {
     const placeholder = document.getElementById("header-placeholder");
     if (placeholder) {
         const res = await fetch("/header");
         placeholder.innerHTML = await res.text();
-
-        // รอให้ header ถูกโหลดแล้วค่อย bind function
         renderAuthButtons();
+        await updateCartCount(); // Update cart count after header loads
     }
+
+    closeLoginOrRegisterModal();
+
+    // Prevent redirect to login/register if already logged in
+    const customer = JSON.parse(localStorage.getItem("customer"));
+    if (customer && (window.location.pathname.includes('/login') || window.location.pathname.includes('/admin/register'))) {
+        window.location.href = '/';
+    }
+
+    // Add event listeners for Enter key
+    const signinEmail = document.querySelector('#signinModal input[type="email"]');
+    if (signinEmail) signinEmail.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
+    const signinPassword = document.getElementById("signinPassword");
+    if (signinPassword) signinPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
+
+    const firstName = document.getElementById("firstName");
+    if (firstName) firstName.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRegister(); });
+    const lastName = document.getElementById("lastName");
+    if (lastName) lastName.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRegister(); });
+    const phone = document.getElementById("phone");
+    if (phone) phone.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRegister(); });
+    const email = document.getElementById("email");
+    if (email) email.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRegister(); });
+    const regPassword = document.getElementById("regPassword");
+    if (regPassword) regPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRegister(); });
+    const regConfirmPassword = document.getElementById("regConfirmPassword");
+    if (regConfirmPassword) regConfirmPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRegister(); });
 });
 
-// ---------------- Login / Logout ----------------
-function renderAuthButtons() {
+// Update cart item count
+async function updateCartCount() {
+    const cartCount = document.getElementById("cartCount");
+    if (!cartCount) return;
+
+    try {
+        const res = await fetch("/api/cart", { credentials: "include" });
+        if (!res.ok) {
+            cartCount.textContent = "0";
+            return;
+        }
+
+        const cartItems = await res.json();
+        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        cartCount.textContent = totalItems;
+    } catch (err) {
+        console.error("Update cart count error:", err);
+        cartCount.textContent = "0";
+    }
+}
+
+// Render auth buttons and profile
+async function renderAuthButtons() {
     const authButtons = document.querySelector(".auth-buttons");
     const profile = document.querySelector(".profile");
-    const customer = JSON.parse(localStorage.getItem("customer"));
+    const userName = document.getElementById("userName");
 
-    if (customer) {
+    try {
+        const res = await fetch("/api/customers/me", { credentials: "include" });
+        if (!res.ok) throw new Error("Not logged in");
+
+        const customer = await res.json();
         authButtons.style.display = "none";
         profile.style.display = "flex";
-    } else {
+        if (userName) userName.textContent = customer.firstName || "User";
+
+        await updateCartCount(); // Update cart count after login
+    } catch {
         authButtons.style.display = "flex";
         profile.style.display = "none";
     }
 }
 
-function handleLogout() {
-    localStorage.removeItem("customer");
-    renderAuthButtons();
-}
-
-function openCart() {
-    alert("🛒 ตะกร้าสินค้า (ยังไม่ทำ)");
+function toggleProfileMenu() {
+    document.querySelector(".profile").classList.toggle("active");
 }
 
 function openLoginModal() {
@@ -46,6 +95,7 @@ function closeLoginOrRegisterModal() {
     document.getElementById("registerModal").style.display = "none";
     document.getElementById("signinModal").style.display = "none";
 }
+
 function showToast(message, type = "success") {
     const toast = document.getElementById("toast");
     toast.textContent = message;
@@ -55,8 +105,6 @@ function showToast(message, type = "success") {
         toast.className = toast.className.replace("show", "").trim();
     }, 3000);
 }
-
-
 
 function togglePassword(inputId, el) {
     const passwordField = document.getElementById(inputId);
@@ -89,6 +137,7 @@ async function handleLogin() {
         const res = await fetch("/api/customers/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ username: email, password })
         });
 
@@ -98,7 +147,6 @@ async function handleLogin() {
             return;
         }
 
-        // เก็บข้อมูลผู้ใช้ใน localStorage
         localStorage.setItem("customer", JSON.stringify({
             customerId: data.customerId,
             email: data.email,
@@ -109,7 +157,7 @@ async function handleLogin() {
         closeLoginOrRegisterModal();
         renderAuthButtons();
         showToast(`✅ Welcome, ${data.firstName || "user"}!`);
-
+        await updateCartCount(); // Update cart count after login
     } catch (err) {
         console.error("Login error:", err);
         showToast("❌ Login failed, please try again");
@@ -153,123 +201,172 @@ async function handleRegister() {
 
         switchModal("registerModal", "signinModal");
         showToast("✅ Register successful, please login");
-
     } catch (err) {
         console.error("Register error:", err);
         showToast("❌ Register failed, please try again");
     }
 }
 
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    // ปิด modal ทั้งสองเมื่อโหลดหน้า
-    closeLoginOrRegisterModal();
-    // Initialize auth buttons
-    renderAuthButtons();
-
-    // ตรวจสอบว่าไม่ redirect ไปหน้า login หรือ register ถ้าล็อกอินแล้ว
-    const customer = JSON.parse(localStorage.getItem("customer"));
-    if (customer && (window.location.pathname.includes('/login') || window.location.pathname.includes('/admin/register'))) {
-        window.location.href = '/';
+async function handleLogout() {
+    try {
+        await fetch("/api/customers/logout", {
+            method: "POST",
+            credentials: "include"
+        });
+        localStorage.removeItem("customer");
+        renderAuthButtons();
+        showToast("👋 Logged out", "success");
+        await updateCartCount(); // Reset cart count after logout
+    } catch (err) {
+        console.error("Logout error:", err);
+        showToast("❌ Logout failed");
     }
+}
 
-    // Add event listeners for Enter key
-    document.querySelector('#signinModal input[type="email"]').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') handleLogin();
-    });
-    document.getElementById("signinPassword").addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') handleLogin();
-    });
+async function openCart() {
+    const cartModal = document.getElementById("cartModal");
+    const cartItemsContainer = document.getElementById("cartItems");
+    const cartTotal = document.getElementById("cartTotal");
 
-    document.getElementById("firstName").addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') handleRegister();
-    });
-    document.getElementById("lastName").addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') handleRegister();
-    });
-    document.getElementById("phone").addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') handleRegister();
-    });
-    document.getElementById("email").addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') handleRegister();
-    });
-    document.getElementById("regPassword").addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') handleRegister();
-    });
-    document.getElementById("regConfirmPassword").addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') handleRegister();
-    });
-});
-
-
-
-async function renderAuthButtons() {
-    const authButtons = document.querySelector(".auth-buttons");
-    const profile = document.querySelector(".profile");
+    if (!cartModal || !cartItemsContainer || !cartTotal) {
+        console.error("Cart modal elements not found");
+        return;
+    }
 
     try {
-        const res = await fetch("/api/customers/me", { credentials: "include" });
-        if (!res.ok) throw new Error("Not logged in");
+        const res = await fetch("/api/cart", { credentials: "include" });
+        if (!res.ok) {
+            const data = await res.json();
+            showToast(data.error || "❌ Please login to view cart");
+            return;
+        }
 
-        const customer = await res.json();
-        authButtons.style.display = "none";
-        profile.style.display = "flex";
+        const cartItems = await res.json();
+        cartItemsContainer.innerHTML = "";
 
-        profile.innerHTML = `
-      <img src="https://product-images-toa-shop.s3.ap-northeast-3.amazonaws.com/profile.jpg"
-           alt="Profile"
-           class="profile-img"
-           onclick="toggleProfileMenu()">
+        let total = 0;
+        cartItems.forEach(item => {
+            total += item.price * item.quantity;
+            const itemElement = document.createElement("div");
+            itemElement.className = "cart-item";
+            itemElement.innerHTML = `
+                <img src="${item.image_main[0] || 'https://via.placeholder.com/50'}" alt="${item.name}">
+                <div>
+                    <strong>${item.name}</strong><br>
+                    <span>${item.price} THB</span>
+                </div>
+                <input type="number" value="${item.quantity}" min="1" max="${item.stock}" onchange="updateCartItem(${item.cart_id}, this.value)">
+                <button onclick="removeCartItem(${item.cart_id})">Remove</button>
+            `;
+            cartItemsContainer.appendChild(itemElement);
+        });
 
-      <div class="dropdown-menu" id="profileDropdown">
-        <span>${customer.firstName || "User"}</span>
-        <hr>
-        <button onclick="openCart()">🛒 Cart</button>
-        <button onclick="handleLogout()">🚪 Logout</button>
-      </div>
-    `;
-    } catch {
-        authButtons.style.display = "flex";
-        profile.style.display = "none";
+        cartTotal.textContent = total.toFixed(2);
+        cartModal.style.display = "flex";
+        await updateCartCount(); // Update cart count when opening cart
+    } catch (err) {
+        console.error("Cart error:", err);
+        showToast("❌ Failed to load cart");
     }
 }
 
-function toggleProfileMenu() {
-    document.querySelector(".profile").classList.toggle("active");
+function closeCartModal() {
+    document.getElementById("cartModal").style.display = "none";
 }
 
-function openCart() {
+async function updateCartItem(cartId, quantity) {
+    try {
+        const res = await fetch(`/api/cart/${cartId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ quantity: parseInt(quantity) })
+        });
 
+        const data = await res.json();
+        if (!res.ok) {
+            showToast(data.error || "❌ Failed to update cart");
+            return;
+        }
+
+        showToast("✅ Cart updated");
+        openCart(); // Refresh cart
+    } catch (err) {
+        console.error("Update cart error:", err);
+        showToast("❌ Failed to update cart");
+    }
+}
+
+async function removeCartItem(cartId) {
+    try {
+        const res = await fetch(`/api/cart/${cartId}`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+            showToast(data.error || "❌ Failed to remove item");
+            return;
+        }
+
+        showToast("✅ Item removed from cart");
+        openCart(); // Refresh cart
+        await updateCartCount(); // Update cart count
+    } catch (err) {
+        console.error("Remove cart item error:", err);
+        showToast("❌ Failed to remove item");
+    }
+}
+
+async function clearCart() {
+    try {
+        const res = await fetch("/api/cart", {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+            showToast(data.error || "❌ Failed to clear cart");
+            return;
+        }
+
+        showToast("✅ Cart cleared");
+        openCart(); // Refresh cart
+        await updateCartCount(); // Update cart count
+    } catch (err) {
+        console.error("Clear cart error:", err);
+        showToast("❌ Failed to clear cart");
+    }
+}
+
+function proceedToCheckout() {
+    window.location.href = "/checkout";
+}
+
+async function addToCart(product) {
+    try {
+        const res = await fetch("/api/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ product_id: product.id, quantity: 1 })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+            showToast(data.error || "❌ Failed to add to cart");
+            return;
+        }
+
+        showToast("✅ Added to cart");
+        await updateCartCount(); // Update cart count after adding item
+    } catch (err) {
+        console.error("Add to cart error:", err);
+        showToast("❌ Failed to add to cart");
+    }
 }
 
 
-async function handleLogout() {
-    await fetch("/api/customers/logout", {
-        method: "POST",
-        credentials: "include"
-    });
-    renderAuthButtons();
-    showToast("👋 Logged out", "success");
-}
-
-async function handleLogin() {
-    const email = document.querySelector('#signinModal input[type="email"]').value;
-    const password = document.getElementById("signinPassword").value;
-
-    const res = await fetch("/api/customers/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // ✅ สำคัญ!
-        body: JSON.stringify({ username: email, password })
-    });
-
-    const data = await res.json();
-    if (!res.ok) return showToast(data.error || "❌ Login failed");
-
-    closeLoginOrRegisterModal();
-    renderAuthButtons();
-    showToast(`✅ Welcome, ${data.firstName}`);
-}
 
