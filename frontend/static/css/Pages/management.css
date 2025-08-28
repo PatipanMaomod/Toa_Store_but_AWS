@@ -640,3 +640,38 @@ footer {
     padding: 0 50px;
     margin-top: 20px;
 }
+
+.profile {
+  position: relative;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 10px;
+  min-width: 150px;
+  z-index: 1000;
+}
+
+.profile.active .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu button {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdown-menu button:hover {
+  background: #f2f2f2;
+}
