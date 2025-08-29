@@ -247,18 +247,28 @@ header {
     display: flex;
 }
 
+
 h1 {
     text-align: center;
     margin: 60px 0 40px;
     font-size: 3rem;
     font-weight: 700;
-    background: linear-gradient(45deg, #ffd369, #ff6b6b, #4ecdc4);
+    background: linear-gradient(42deg, #ffd369,#4ecdc4, #ff6b6b);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    opacity: 0;
     animation: fadeInUp 1s ease forwards;
+
 }
+.hero-box {
+  display: inline-block;       /* ขนาดตามข้อความ */
+  padding: 20px 40px;          /* เว้นระยะในกล่อง */
+  border-radius: 15px;         /* มุมโค้ง */
+  background: rgba(0, 0, 0, 0.5); /* กล่องโปร่งดำ */
+  backdrop-filter: blur(10px); /* เบลอพื้นหลัง */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4); /* เงากล่อง */
+}
+
 
 @keyframes fadeInUp {
     from {
@@ -301,6 +311,14 @@ footer {
     text-align: center;
 }
 
+.journey {
+    background: url('https://product-images-toa-shop.s3.ap-northeast-3.amazonaws.com/pro_images_S3/Image_home1.jpg') center/cover no-repeat;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
 /* Modal Popup */
 .modal {
     display: none;

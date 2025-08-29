@@ -71,5 +71,40 @@ function updateTotal() {
     const total = currentProduct.price * qty;
     document.getElementById('total').textContent = `฿${total}`;
 }
+async function addToCarts() {
+    try {
+        if (!currentProduct) {
+            showToast("❌ Product not loaded");
+            return;
+        }
+
+        const qty = parseInt(document.getElementById('quantity').value) || 1;
+
+        if (qty > currentProduct.stock) {
+            showToast(`⚠ Only ${currentProduct.stock} left in stock`);
+            return;
+        }
+
+        const res = await fetch("/api/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ product_id: currentProduct.id, quantity: qty })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+            showToast(data.error || "❌ Failed to add to cart");
+            return;
+        }
+
+        showToast(`✅ Added ${qty} item(s) to cart`);
+        await updateCartCount(); // Update cart count after adding item
+    } catch (err) {
+        console.error("Add to cart error:", err);
+        showToast("❌ Failed to add to cart");
+    }
+}
+
 
 loadProduct();

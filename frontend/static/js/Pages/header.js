@@ -341,6 +341,20 @@ async function clearCart() {
     }
 }
 
+async function clearCartAll() {
+    try {
+        const res = await fetch("/api/cart", {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        await updateCartCount(); 
+    } catch (err) {
+        console.error("Clear cart error:", err);
+        showToast("❌ Failed to clear cart");
+    }
+}
+
 function proceedToCheckout() {
     window.location.href = "/checkout";
 }

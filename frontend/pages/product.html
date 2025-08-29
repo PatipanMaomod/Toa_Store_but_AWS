@@ -5,10 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Detail - Teburu</title>
-<<<<<<< HEAD
   <link rel="stylesheet" href="/static/css/Pages/header.css">
-=======
->>>>>>> Sora
   <link rel="stylesheet" href="/static/css/Pages/product.css">
 </head>
 
@@ -35,7 +32,7 @@
             style="width:60px;text-align:center;"></span>
       </div>
       <div class="summary-row"><span>Total</span><span id="total">-</span></div>
-      <button class="checkout-btn" onclick="addToCart()">Add to Cart</button>
+      <button class="checkout-btn" onclick="addToCarts()">Add to Cart</button>
     </div>
   </div>
 
@@ -49,6 +46,8 @@
 
   <script src="/static/js/Pages/product.js"></script>
   <script src="/static/js/Pages/header.js"></script>
+  <script src="/static/js/session-check.js"></script>
+
   <script>
     fetch("/header")
       .then(res => res.text())

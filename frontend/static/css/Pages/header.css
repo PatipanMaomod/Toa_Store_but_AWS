@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 header {
     background: rgba(18, 19, 24, 0.95);
     backdrop-filter: blur(20px);
@@ -219,11 +218,17 @@ header {
 }
 
 .modal-content h3 {
-    color: #ff6600;
-    /* สีส้ม */
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
+  color: #ff6600;   /* สีส้ม */
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.modal-content h2 {
+  color: #000000;   /* สีส้ม */
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .modal-content input,
@@ -248,6 +253,12 @@ header {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+}
+.modal-actions {
+  display: flex;
+  flex-direction: column; /* ให้ปุ่มเรียงลงล่าง */
+  gap: 10px;              /* เว้นระยะ 10px ระหว่างปุ่ม */
+  margin-top: 15px;
 }
 
 .modal-content button:hover {
@@ -333,81 +344,71 @@ header {
 
 
 .cart-total {
-    margin: 20px 0;
-    font-size: 18px;
+  margin: 20px 0;
+  font-size: 18px;
+}
+
+.cart-actions {
+  display: flex;
+  flex-direction: column; /* ให้ปุ่มเรียงลงล่าง */
+  gap: 10px;              /* เว้นระยะ 10px ระหว่างปุ่ม */
+  margin-top: 15px;
 }
 
 #cartItems {
-    max-height: 300px;
-    overflow-y: auto;
-    margin-bottom: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
 }
 
 .cart-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
 }
 
 .cart-item img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 5px;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
 }
 
 .cart-item input {
-    width: 60px;
-    padding: 5px;
-    text-align: center;
+  width: 60px;
+  padding: 5px;
+  text-align: center;
 }
 
 .cart-item button {
-    background: #ff6b6b;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
+  background: #ff6b6b;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .cart-item button:hover {
-    background: #ff8e8e;
+  background: #ff8e8e;
 }
 
 .cartTotal {
-    color: #000000;
-    font-weight: bold;
-    font-size: 20px;
+  color: #000000;
+  font-weight: bold;
+  font-size: 20px;
 }
 
 .cart-count {
-    background: linear-gradient(45deg, #ffd369, #ff6b6b);
-    color: #fff;
-    border-radius: 12px;
-    padding: 2px 8px;
-    font-size: 12px;
-    margin-left: 8px;
-    min-width: 20px;
-    text-align: center;
-    display: inline-block;
-}
-
-.search-bar {
-    flex: 1;
-    /* กินพื้นที่ฝั่งซ้าย */
-}
-
-.search-bar input {
-    width: 60%;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 30px;
-    font-size: 16px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    outline: none;
-    transition: all 0.3s ease;
+  background: linear-gradient(45deg, #ffd369, #ff6b6b);
+  color: #fff;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 12px;
+  margin-left: 8px;
+  min-width: 20px;
+  text-align: center;
+  display: inline-block;
 }

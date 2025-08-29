@@ -22,8 +22,8 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: false, // true ถ้าใช้ https
-    // maxAge: 1000 * 60 * 60 // 1 ชั่วโมง
-    maxAge: 1000 * 60 // 1 นาที
+    maxAge: 1000 * 60 * 60 // 1 ชั่วโมง
+    // maxAge: 1000 * 60 // 1 นาที
 
   }
 }));
@@ -34,17 +34,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 function requireAdmin(req, res, next) {
   if (req.session && req.session.role === "admin") {
-    next(); 
+    next();
   } else {
     res.redirect("/admin/login");   // ไปหน้า login
   }
 }
-function requireLogin(req, res, next) {
-  if (!req.session.customerId) {
-    return res.status(440).json({ error: "Session expired" }); // 440: Login Timeout
-  }
-  next();
-}
+
 
 // ---------- S3 Client ----------
 const s3 = new S3Client({ region: process.env.AWS_REGION });
@@ -67,6 +62,10 @@ app.get('/admin/header', (req, res) => {
 
 app.get('/products', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'products.html'));
+});
+
+app.get('/support', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'support.html'));
 });
 
 app.get('/product/:id', (req, res) => {
@@ -672,10 +671,43 @@ app.delete('/api/cart', async (req, res) => {
   }
 });
 
+// ลด stock
+app.post("/api/update_stock", async (req, res) => {
+  try {
+    const { items } = req.body;  // items = [{id, quantity}, ...]
 
+    if (!items || items.length === 0) {
+      return res.status(400).json({ success: false, error: "Cart is empty" });
+    }
 
+    for (const item of items) {
+      const [result] = await pool.query(
+        "UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?",
+        [item.quantity, item.product_id, item.quantity]  
+      );
 
+      if (result.affectedRows === 0) {
+        return res.status(400).json({ success: false, error: `Not enough stock for product ${item.product_id}` });
+      }
+    }
 
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Update stock error:", err);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+});
+app.get("/api/stock", async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT id, name, stock FROM products"
+    );
+    res.json({ success: true, products: rows });
+  } catch (err) {
+    console.error("Stock fetch error:", err);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+});
 
 
 

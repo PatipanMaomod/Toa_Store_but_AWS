@@ -532,8 +532,10 @@ footer {
 }
 
 .search-bar {
-    flex: 1;
-    /* กินพื้นที่ฝั่งซ้าย */
+    display: flex; /* Use flexbox to center the input */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically within the container */
+    margin-top: 20px; /* Add some spacing from the top */
 }
 
 .search-bar input {
