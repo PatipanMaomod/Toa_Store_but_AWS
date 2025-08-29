@@ -14,7 +14,8 @@
 - **Monitoring**: ใช้ **CloudWatch** ตรวจสอบการทำงาน  
 
 ---
-
+##  Diagram
+![System Diagram](img_md/Diagram.JPG)
 ## ⚙️ ส่วนประกอบหลักของระบบ  
 - ระบบสมาชิก (Customer Register/Login)  
 - ระบบจัดการสินค้า (เพิ่ม/ลบ/แก้ไข)  
