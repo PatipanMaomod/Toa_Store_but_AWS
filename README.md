@@ -31,8 +31,9 @@
 - Backend API ถูก Deploy บน **EC2** ผ่าน **GitHub Actions**  
 - Database ใช้ **AWS RDS MySQL**  
 - รูปภาพถูกอัปโหลดและเก็บใน **S3 Bucket**  
-
+## AWS S3
 ![System Diagram](img_md/Capture1.JPG)
+## My SQL
 ![System Diagram](img_md/Capture5.JPG)
 ---
 
