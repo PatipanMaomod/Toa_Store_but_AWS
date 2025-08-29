@@ -319,95 +319,59 @@ function printReceiptSimple(items, total) {
     const receiptNo = `RC${now.getFullYear()}-${Math.floor(Math.random() * 10000)
         .toString().padStart(4, '0')}`;
 
-    // สร้างโครงสร้างหน้า
-    const doc = receiptWindow.document;
+    // แปลง items → html
+    const itemsHtml = items.map(item => `
+        <div class="item">
+            <div class="left">
+                ${item.name}<br>
+                <small>${item.quantity} x ฿${Number(item.price).toFixed(2)}</small>
+            </div>
+            <div class="right">฿${(Number(item.price) * item.quantity).toFixed(2)}</div>
+        </div>
+    `).join("");
 
-    const html = doc.createElement("html");
-    const head = doc.createElement("head");
-    const body = doc.createElement("body");
+    const receiptHtml = `
+        <html>
+        <head>
+            <title>ใบเสร็จรับเงิน - Teburu</title>
+            <style>
+                body { font-family: Arial, sans-serif; background:#f9f9f9; padding:20px; }
+                .receipt { max-width:420px; margin:auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
+                h2 { text-align:center; margin:0; }
+                .item { display:flex; justify-content:space-between; margin:8px 0; border-bottom:1px dashed #ddd; padding-bottom:5px; }
+                .left { font-size:14px; }
+                .right { font-weight:bold; }
+                .summary { margin-top:15px; font-size:16px; font-weight:bold; text-align:right; color:#28a745; }
+                .footer { margin-top:20px; text-align:center; font-size:14px; color:#555; }
+                .btns { margin-top:20px; text-align:center; }
+                .btns button { padding:8px 16px; margin:5px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+                .print-btn { background:#007bff; color:white; }
+            </style>
+        </head>
+        <body>
+            <div class="receipt">
+                <h2>🧾 ใบเสร็จรับเงิน</h2>
+                <div class="footer">
+                    เลขที่ใบเสร็จ: ${receiptNo}<br>
+                    วันที่/เวลา: ${formattedDate}<br>
+                </div>
 
-    // style
-    const style = doc.createElement("style");
-    style.textContent = `
-        body { font-family: Arial, sans-serif; background:#f9f9f9; padding:20px; }
-        .receipt { max-width:420px; margin:auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
-        h2 { text-align:center; margin:0; }
-        .item { display:flex; justify-content:space-between; margin:8px 0; border-bottom:1px dashed #ddd; padding-bottom:5px; }
-        .left { font-size:14px; }
-        .right { font-weight:bold; }
-        .summary { margin-top:15px; font-size:16px; font-weight:bold; text-align:right; color:#28a745; }
-        .footer { margin-top:20px; text-align:center; font-size:14px; color:#555; }
-        .btns { margin-top:20px; text-align:center; }
-        .btns button { padding:8px 16px; margin:5px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
-        .print-btn { background:#007bff; color:white; }
+                ${itemsHtml}
+
+                <div class="summary">ยอดรวมทั้งสิ้น: ฿${total.toFixed(2)}</div>
+
+                <div class="footer">Teburu Furniture Store</div>
+
+                <div class="btns">
+                    <button class="print-btn" onclick="window.print()">🖨 พิมพ์ใบเสร็จ</button>
+                </div>
+            </div>
+        </body>
+        </html>
     `;
-    head.appendChild(style);
 
-    // wrapper
-    const wrapper = doc.createElement("div");
-    wrapper.className = "receipt";
-
-    const h2 = doc.createElement("h2");
-    h2.textContent = "🧾 ใบเสร็จรับเงิน";
-    wrapper.appendChild(h2);
-
-    const info = doc.createElement("div");
-    info.className = "footer";
-    info.innerHTML = `
-        เลขที่ใบเสร็จ: ${receiptNo}<br>
-        วันที่/เวลา: ${formattedDate}<br>
-    `;
-    wrapper.appendChild(info);
-
-    // รายการสินค้า
-    items.forEach(item => {
-        const div = doc.createElement("div");
-        div.className = "item";
-
-        const left = doc.createElement("div");
-        left.className = "left";
-        left.innerHTML = `${item.name}<br><small>${item.quantity} x ฿${Number(item.price).toFixed(2)}</small>`;
-
-        const right = doc.createElement("div");
-        right.className = "right";
-        right.textContent = `฿${(Number(item.price) * item.quantity).toFixed(2)}`;
-
-        div.appendChild(left);
-        div.appendChild(right);
-        wrapper.appendChild(div);
-    });
-
-    // รวมทั้งหมด
-    const summary = doc.createElement("div");
-    summary.className = "summary";
-    summary.textContent = `ยอดรวมทั้งสิ้น: ฿${total.toFixed(2)}`;
-    wrapper.appendChild(summary);
-
-    // footer
-    const footer = doc.createElement("div");
-    footer.className = "footer";
-    footer.textContent = "Teburu Furniture Store";
-    wrapper.appendChild(footer);
-
-    // ปุ่มพิมพ์
-    const btns = doc.createElement("div");
-    btns.className = "btns";
-
-    const printBtn = doc.createElement("button");
-    printBtn.className = "print-btn";
-    printBtn.textContent = "🖨 พิมพ์ใบเสร็จ";
-    printBtn.onclick = () => receiptWindow.print();
-
-    btns.appendChild(printBtn);
-    wrapper.appendChild(btns);
-
-    body.appendChild(wrapper);
-    html.appendChild(head);
-    html.appendChild(body);
-
-    doc.open();
-    doc.appendChild(html);
-    doc.close();
+    receiptWindow.document.write(receiptHtml);
+    receiptWindow.document.close();
 }
 
 
