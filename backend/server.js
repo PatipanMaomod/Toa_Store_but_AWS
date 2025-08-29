@@ -69,7 +69,9 @@ app.get('/product/:id', (req, res) => {
 });
 
 
-
+app.get('/support', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'support.html'));
+});
 
 
 app.get('/checkout', (req, res) => {
