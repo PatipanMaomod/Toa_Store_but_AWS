@@ -32,8 +32,8 @@
 - Database ใช้ **AWS RDS MySQL**  
 - รูปภาพถูกอัปโหลดและเก็บใน **S3 Bucket**  
 
-**Screenshot:** (แทรกภาพหน้าจอผลการ Deploy S3 / EC2 ที่สำเร็จ)  
-
+![System Diagram](img_md/Capture1.JPG)
+![System Diagram](img_md/Capture5.JPG)
 ---
 
 ## 🔄 GitHub Actions Pipeline  
@@ -41,8 +41,6 @@ Pipeline ที่ใช้ในโปรเจกต์นี้:
 1. **Build** → ตรวจสอบโค้ด  
 2. **Test** → Run Unit Test  
 3. **Deploy** → อัปโหลดไปที่ S3 / Restart EC2  
-
-**Screenshot:** (แทรกภาพหน้าจอการทำงานของ GitHub Actions Pipeline)  
 
 ---
 
@@ -70,4 +68,4 @@ Pipeline ที่ใช้ในโปรเจกต์นี้:
 - **Scaling Policy**: CPU > 70% → เพิ่ม Instance  
 - **Scaling Down**: CPU < 30% → ลด Instance  
 
-**Screenshot:** (แทรกภาพหน้าจอการ Auto-scaling ที่เกิดขึ้นจริงจาก AWS Console)  
+![System Diagram](img_md/scal.png)
