@@ -15,7 +15,7 @@
 
 ---
 ##  Diagram
-![System Diagram](img_md/Diagram.JPG)
+![System Diagram](img_md/Diagram1.JPG)
 ## ⚙️ ส่วนประกอบหลักของระบบ  
 - ระบบสมาชิก (Customer Register/Login)  
 - ระบบจัดการสินค้า (เพิ่ม/ลบ/แก้ไข)  
